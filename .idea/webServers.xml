@@ -2,7 +2,7 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="da358f27-d917-45c2-b397-28abdc723d2f" name="DLT1" url="http://DLT1">
+      <webServer id="310c7eaa-1311-4b49-9411-3810ba470c60" name="DLT1" url="http://DLT1">
         <fileTransfer host="DLT1" port="22" accessType="SFTP">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" />
