@@ -6,3 +6,4 @@ Hello!
 Helloo!
 Hello from PyCharm!
 Hello from Github to PyCharm ver0 branch!
+Test linux remote!
