@@ -2,9 +2,8 @@ tensorflow>=0.11
 nltk
 tqdm
 jinja2
-Hello Master!
-Helloo Master!
+Hello!
+Helloo!
 Hello from PyCharm!
-Hello to PyCharm from Github!
-Hello to PyCharm from Github2!
-Test Linux from branch master!
+Hello from Github to PyCharm ver0 branch!
+Test linux remote!!!

@@ -5,7 +5,7 @@
       <paths name="DLT1">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/hpalangi/QA/AI2_Stuff/my-bi-att-flow" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/hpalangi/QA/TPR_Stuff/Codes/TPR_ver1.0/QA_TPR" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
