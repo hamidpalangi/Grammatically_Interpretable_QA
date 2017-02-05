@@ -97,6 +97,9 @@ flags.DEFINE_bool("q2c_att", True, "question-to-context attention? [True]")
 flags.DEFINE_bool("c2q_att", True, "context-to-question attention? [True]")
 flags.DEFINE_bool("dynamic_att", False, "Dynamic attention [False]")
 
+# TPR parameters
+flags.DEFINE_bool("TPR", True, "Use TPR? [True]")
+
 
 def main(_):
     config = flags.FLAGS
