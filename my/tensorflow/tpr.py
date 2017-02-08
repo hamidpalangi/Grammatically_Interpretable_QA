@@ -19,8 +19,6 @@ class TPRCell(tf.nn.rnn_cell.RNNCell):
         :param nRoles: # of roles
         :param dSymbols: embedding size of each symbol
         :param dRoles: embedding size of each role
-        :param state_is_tuple: Deprecated from new versions of TF, will remove it soon.
-        :param activation: non-linear activation function
         :param activation: non-linear activation function
         """
         self._nSymbols = nSymbols
