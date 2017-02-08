@@ -31,7 +31,8 @@ flags.DEFINE_bool('load_ema', True, "load exponential average of variables when 
 flags.DEFINE_bool("eval", True, "eval? [True]")
 
 # Training / test parameters
-flags.DEFINE_integer("batch_size", 60, "Batch size [60]")
+# flags.DEFINE_integer("batch_size", 60, "Batch size [60]")
+flags.DEFINE_integer("batch_size", 40, "Batch size [40]") # due to memory limitation when using TPR.
 flags.DEFINE_integer("val_num_batches", 100, "validation num batches [100]")
 flags.DEFINE_integer("test_num_batches", 0, "test num batches [0]")
 flags.DEFINE_integer("num_epochs", 12, "Total number of epochs for training [12]")
@@ -99,6 +100,12 @@ flags.DEFINE_bool("dynamic_att", False, "Dynamic attention [False]")
 
 # TPR parameters
 flags.DEFINE_bool("TPR", True, "Use TPR? [True]")
+flags.DEFINE_bool("share_tpr_weights", True, "Share TPR weights between query side and text side? [True]")
+flags.DEFINE_integer("nSymbols", 100, "# of Symbols in TPR [100]")
+flags.DEFINE_integer("dSymbols", 10, "size of Symbol embedding in TPR [10]")
+flags.DEFINE_integer("nRoles", 20, "# of Roles in TPR [20]")
+flags.DEFINE_integer("dRoles", 10, "size of Role embedding in TPR [10]")
+# TODO: Perofrm hyperparameter search to adjust default values.
 
 
 def main(_):
