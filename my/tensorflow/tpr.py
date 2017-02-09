@@ -45,10 +45,10 @@ class TPRCell(tf.nn.rnn_cell.RNNCell):
         with tf.variable_scope(scope or type(self).__name__):
             with tf.variable_scope("BindVecs_aF"):
                 # Dimensionality of aF will be [batchsize x nSymbols].
-                aF = self._activation(tf.nn.rnn_cell._linear([inputs, state], output_size=self._nSymbols, bias=False))
+                aF = self._activation(tf.nn.rnn_cell._linear([inputs, state], output_size=self._nSymbols, bias=True))
             with tf.variable_scope("BindVecs_aR"):
                 # Dimensionality of aR will be [batchsize x nRoles].
-                aR = self._activation( tf.nn.rnn_cell._linear([inputs, state], output_size=self._nRoles, bias=False) )
+                aR = self._activation( tf.nn.rnn_cell._linear([inputs, state], output_size=self._nRoles, bias=True) )
             with tf.variable_scope("FillerRoles"):
                 F = tf.get_variable(name="F", shape=[self._nSymbols, self._dSymbols])
                 R = tf.get_variable(name="R", shape=[self._nRoles, self._dRoles])
