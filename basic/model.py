@@ -8,8 +8,9 @@ from tensorflow.python.ops.rnn_cell import BasicLSTMCell
 from basic.read_data import DataSet
 from my.tensorflow import get_initializer
 from my.tensorflow.nn import softsel, get_logits, highway_network, multi_conv1d
-from my.tensorflow.rnn import bidirectional_dynamic_rnn
+from my.tensorflow.rnn import bidirectional_dynamic_rnn, dynamic_rnn
 from my.tensorflow.rnn_cell import SwitchableDropoutWrapper, AttentionCell
+from my.tensorflow.tpr import TPRCell
 
 
 def get_multi_gpu_models(config):
@@ -137,6 +138,8 @@ class Model(object):
         x_len = tf.reduce_sum(tf.cast(self.x_mask, 'int32'), 2)  # [N, M]
         q_len = tf.reduce_sum(tf.cast(self.q_mask, 'int32'), 1)  # [N]
 
+        # TODO: Define a new LSTM cell with input from TPR.
+
         with tf.variable_scope("prepro"):
             (fw_u, bw_u), ((_, fw_u_f), (_, bw_u_f)) = bidirectional_dynamic_rnn(d_cell, d_cell, qq, q_len, dtype='float', scope='u1')  # [N, J, d], [N, d]
             u = tf.concat(2, [fw_u, bw_u])
@@ -149,6 +152,24 @@ class Model(object):
                 h = tf.concat(3, [fw_h, bw_h])  # [N, M, JX, 2d]
             self.tensor_dict['u'] = u
             self.tensor_dict['h'] = h
+
+        # TPR model
+        tpr_cell = TPRCell(config.nSymbols, config.nRoles, config.dSymbols, config.dRoles)
+        if config.TPR:
+            with tf.variable_scope("tpr"):
+                (fw_uTPR, bw_uTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, qq, q_len, dtype='float', scope='u1TPR')  # [N, J, d], [N, d]
+                u = tf.concat(2, [fw_u, bw_u, fw_uTPR, bw_uTPR])
+                if config.share_tpr_weights:
+                    tf.get_variable_scope().reuse_variables()
+                    (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='u1TPR')  # [N, M, JX, 2d]
+                    h = tf.concat(3, [fw_h, bw_h, fw_hTPR, bw_hTPR])  # [N, M, JX, 2d]
+                else:
+                    (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='h1TPR')  # [N, M, JX, 2d]
+                    h = tf.concat(3, [fw_h, bw_h, fw_hTPR, bw_hTPR])  # [N, M, JX, 2d]
+                self.tensor_dict['u'] = u
+                self.tensor_dict['h'] = h
+                # TODO: Define a new TPR cell with input from LSTM.
+
 
         with tf.variable_scope("main"):
             if config.dynamic_att:
