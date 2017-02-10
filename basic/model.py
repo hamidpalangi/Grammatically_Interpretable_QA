@@ -140,7 +140,7 @@ class Model(object):
 
         # TODO: Define a new LSTM cell with input from TPR.
 
-        if config.TPRnoLSTM:
+        if config.justTPR:
             # TPR model
             tpr_cell = TPRCell(config.nSymbols, config.nRoles, config.dSymbols, config.dRoles)
             with tf.variable_scope("tpr"):
@@ -155,7 +155,7 @@ class Model(object):
                     h = tf.concat(3, [fw_hTPR, bw_hTPR])  # [N, M, JX, 2d]
                 self.tensor_dict['u'] = u
                 self.tensor_dict['h'] = h
-        else:
+        elif config.justLSTM:
             with tf.variable_scope("prepro"):
                 (fw_u, bw_u), ((_, fw_u_f), (_, bw_u_f)) = bidirectional_dynamic_rnn(d_cell, d_cell, qq, q_len, dtype='float', scope='u1')  # [N, J, d], [N, d]
                 u = tf.concat(2, [fw_u, bw_u])
@@ -168,23 +168,29 @@ class Model(object):
                     h = tf.concat(3, [fw_h, bw_h])  # [N, M, JX, 2d]
                 self.tensor_dict['u'] = u
                 self.tensor_dict['h'] = h
-
+        elif config.LSTMandTPR:
+            with tf.variable_scope("prepro"):
+                (fw_u, bw_u), ((_, fw_u_f), (_, bw_u_f)) = bidirectional_dynamic_rnn(d_cell, d_cell, qq, q_len, dtype='float', scope='u1')  # [N, J, d], [N, d]
+                if config.share_lstm_weights:
+                    tf.get_variable_scope().reuse_variables()
+                    (fw_h, bw_h), _ = bidirectional_dynamic_rnn(cell, cell, xx, x_len, dtype='float', scope='u1')  # [N, M, JX, 2d]
+                else:
+                    (fw_h, bw_h), _ = bidirectional_dynamic_rnn(cell, cell, xx, x_len, dtype='float', scope='h1')  # [N, M, JX, 2d]
             # TPR model
             tpr_cell = TPRCell(config.nSymbols, config.nRoles, config.dSymbols, config.dRoles)
-            if config.TPR:
-                with tf.variable_scope("tpr"):
-                    (fw_uTPR, bw_uTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, qq, q_len, dtype='float', scope='u1TPR')  # [N, J, d], [N, d]
-                    u = tf.concat(2, [fw_u, bw_u, fw_uTPR, bw_uTPR])
-                    if config.share_tpr_weights:
-                        tf.get_variable_scope().reuse_variables()
-                        (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='u1TPR')  # [N, M, JX, 2d]
-                        h = tf.concat(3, [fw_h, bw_h, fw_hTPR, bw_hTPR])  # [N, M, JX, 2d]
-                    else:
-                        (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='h1TPR')  # [N, M, JX, 2d]
-                        h = tf.concat(3, [fw_h, bw_h, fw_hTPR, bw_hTPR])  # [N, M, JX, 2d]
-                    self.tensor_dict['u'] = u
-                    self.tensor_dict['h'] = h
-                    # TODO: Define a new TPR cell with input from LSTM.
+            with tf.variable_scope("tpr"):
+                (fw_uTPR, bw_uTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, qq, q_len, dtype='float', scope='u1TPR')  # [N, J, d], [N, d]
+                u = tf.concat(2, [fw_u, bw_u, fw_uTPR, bw_uTPR])
+                if config.share_tpr_weights:
+                    tf.get_variable_scope().reuse_variables()
+                    (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='u1TPR')  # [N, M, JX, 2d]
+                    h = tf.concat(3, [fw_h, bw_h, fw_hTPR, bw_hTPR])  # [N, M, JX, 2d]
+                else:
+                    (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='h1TPR')  # [N, M, JX, 2d]
+                    h = tf.concat(3, [fw_h, bw_h, fw_hTPR, bw_hTPR])  # [N, M, JX, 2d]
+                self.tensor_dict['u'] = u
+                self.tensor_dict['h'] = h
+                # TODO: Define a new TPR cell with input from LSTM.
 
 
         with tf.variable_scope("main"):
