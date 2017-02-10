@@ -100,6 +100,7 @@ flags.DEFINE_bool("dynamic_att", False, "Dynamic attention [False]")
 
 # TPR parameters
 flags.DEFINE_bool("TPR", True, "Use TPR? [True]")
+flags.DEFINE_bool("TPRnoLSTM", False, "Use just TPR not LSTM in phrase embedding layer? [False]")
 flags.DEFINE_bool("share_tpr_weights", True, "Share TPR weights between query side and text side? [True]")
 flags.DEFINE_integer("nSymbols", 100, "# of Symbols in TPR [100]")
 flags.DEFINE_integer("dSymbols", 10, "size of Symbol embedding in TPR [10]")
