@@ -65,3 +65,5 @@ class TPRCell(tf.nn.rnn_cell.RNNCell):
             # Vectorizing T. The dimension of new_state will be [batchsize x (dSymbols*dRoles)]
             new_state = tf.reshape(T, shape=[tf.shape(T)[0], -1])
         return new_state, new_state
+
+# ???
