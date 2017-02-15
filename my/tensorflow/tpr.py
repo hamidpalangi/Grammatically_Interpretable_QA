@@ -122,9 +122,9 @@ class TPRLSTMCell(tf.nn.rnn_cell.RNNCell):
     @property
     def state_size(self):
         # we track three vectors over time:
-        # 1. vect(T) in TPR which has size of self._dSymbols * self._dRoles
-        # 2. c (states of cells) in LSTM which has size of self._ncell
-        # 3. h (states of hidden units) in LSTM which has size of self._ncell
+        # 1. c (states of cells) in LSTM which has size of self._ncell
+        # 2. h (states of hidden units) in LSTM which has size of self._ncell
+        # 3. vect(T) in TPR which has size of self._dSymbols * self._dRoles
         return TPRLSTMStateTuple(self._ncell, self._ncell, self._dimT)
 
     @property
