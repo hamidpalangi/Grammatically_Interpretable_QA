@@ -152,10 +152,10 @@ class TPRLSTMCell(tf.nn.rnn_cell.RNNCell):
                 new_h = self._LSTMactivation(new_c) * tf.nn.sigmoid(o)
             with tf.variable_scope("BindVecs_aF"):
                 # Dimensionality of aF will be [batchsize x nSymbols].
-                aF = self._activation(tf.nn.rnn_cell._linear([inputs, h, Tvec], output_size=self._nSymbols, bias=True))
+                aF = self._TPRactivation(tf.nn.rnn_cell._linear([inputs, h, Tvec], output_size=self._nSymbols, bias=True))
             with tf.variable_scope("BindVecs_aR"):
                 # Dimensionality of aR will be [batchsize x nRoles].
-                aR = self._activation( tf.nn.rnn_cell._linear([inputs, h, Tvec], output_size=self._nRoles, bias=True) )
+                aR = self._TPRactivation( tf.nn.rnn_cell._linear([inputs, h, Tvec], output_size=self._nRoles, bias=True) )
             with tf.variable_scope("FillerRoles"):
                 F = tf.get_variable(name="F", shape=[self._nSymbols, self._dSymbols])
                 R = tf.get_variable(name="R", shape=[self._nRoles, self._dRoles])
