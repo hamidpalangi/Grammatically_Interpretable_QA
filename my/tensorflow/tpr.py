@@ -143,13 +143,19 @@ class TPRLSTMCell(tf.nn.rnn_cell.RNNCell):
         :return:
         """
         with tf.variable_scope(scope or type(self).__name__):
-            c, h, Tvec = tf.split_v(split_dim=1, size_splits=[self._ncell, self._ncell, self._dimT], value=state)
+            c, h, Tvec = state
+            with tf.variable_scope("LSTM"):
+                concat = tf.nn.rnn_cell._linear([inputs, h, Tvec], output_size=4*self._ncell, bias=True)
+                # i = input_gate, j = new_input, f = forget_gate, o = output_gate
+                i, j, f, o = tf.split(1, 4, concat)
+                new_c = (c * tf.nn.sigmoid(f + self._forget_bias) + tf.nn.sigmoid(i) * self._LSTMactivation(j))
+                new_h = self._LSTMactivation(new_c) * tf.nn.sigmoid(o)
             with tf.variable_scope("BindVecs_aF"):
                 # Dimensionality of aF will be [batchsize x nSymbols].
-                aF = self._activation(tf.nn.rnn_cell._linear([inputs, state], output_size=self._nSymbols, bias=True))
+                aF = self._activation(tf.nn.rnn_cell._linear([inputs, h, Tvec], output_size=self._nSymbols, bias=True))
             with tf.variable_scope("BindVecs_aR"):
                 # Dimensionality of aR will be [batchsize x nRoles].
-                aR = self._activation( tf.nn.rnn_cell._linear([inputs, state], output_size=self._nRoles, bias=True) )
+                aR = self._activation( tf.nn.rnn_cell._linear([inputs, h, Tvec], output_size=self._nRoles, bias=True) )
             with tf.variable_scope("FillerRoles"):
                 F = tf.get_variable(name="F", shape=[self._nSymbols, self._dSymbols])
                 R = tf.get_variable(name="R", shape=[self._nRoles, self._dRoles])
@@ -164,5 +170,7 @@ class TPRLSTMCell(tf.nn.rnn_cell.RNNCell):
                 itemR = tf.expand_dims(itemR, 2)
             T = tf.batch_matmul( x = itemF, y = itemR, adj_y=True)
             # Vectorizing T. The dimension of new_state will be [batchsize x (dSymbols*dRoles)]
-            new_state = tf.reshape(T, shape=[tf.shape(T)[0], -1])
-        return new_state, new_state
+            new_Tvec = tf.reshape(T, shape=[tf.shape(T)[0], -1])
+            new_state = TPRLSTMStateTuple(new_c, new_h, new_Tvec)
+            output = tf.concat(1, [new_h, new_Tvec])
+        return output, new_state
