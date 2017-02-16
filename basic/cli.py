@@ -100,10 +100,10 @@ flags.DEFINE_bool("dynamic_att", False, "Dynamic attention [False]")
 
 # TPR parameters
 flags.DEFINE_bool("LSTMandTPR", False, "Use TPR + LSTM concatenated in phrase embedding layer?"
-                                       "Note that here TPR and LSTM are two independent cells. [True]")
+                                       "Note that here TPR and LSTM are two independent cells. [Flase]")
 flags.DEFINE_bool("justTPR", False, "Use just TPR not LSTM in phrase embedding layer? [False]")
 flags.DEFINE_bool("justLSTM", False, "Use just LSTM not TPR in phrase embedding layer? [False]")
-flags.DEFINE_bool("TPRLSTMCell", True, "Use newly defined mixed TPR-LSTM cell in phrase embedding layer? [False]")
+flags.DEFINE_bool("TPRLSTMCell", True, "Use newly defined mixed TPR-LSTM cell in phrase embedding layer? [True]")
 flags.DEFINE_bool("share_tpr_weights", True, "Share TPR weights between query side and text side? [True]")
 flags.DEFINE_integer("nSymbols", 100, "# of Symbols in TPR [100]")
 flags.DEFINE_integer("dSymbols", 10, "size of Symbol embedding in TPR [10]")
