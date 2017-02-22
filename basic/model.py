@@ -133,8 +133,6 @@ class Model(object):
         self.tensor_dict['xx'] = xx
         self.tensor_dict['qq'] = qq
 
-        cell = BasicLSTMCell(d, state_is_tuple=True)
-        d_cell = SwitchableDropoutWrapper(cell, self.is_train, input_keep_prob=config.input_keep_prob)
         x_len = tf.reduce_sum(tf.cast(self.x_mask, 'int32'), 2)  # [N, M]
         q_len = tf.reduce_sum(tf.cast(self.q_mask, 'int32'), 1)  # [N]
 
@@ -154,6 +152,8 @@ class Model(object):
                 self.tensor_dict['u'] = u
                 self.tensor_dict['h'] = h
         elif config.justLSTM:
+            cell = BasicLSTMCell(d, state_is_tuple=True)
+            d_cell = SwitchableDropoutWrapper(cell, self.is_train, input_keep_prob=config.input_keep_prob)
             with tf.variable_scope("prepro"):
                 (fw_u, bw_u), ((_, fw_u_f), (_, bw_u_f)) = bidirectional_dynamic_rnn(d_cell, d_cell, qq, q_len, dtype='float', scope='u1')  # [N, J, d], [N, d]
                 u = tf.concat(2, [fw_u, bw_u])
@@ -167,6 +167,8 @@ class Model(object):
                 self.tensor_dict['u'] = u
                 self.tensor_dict['h'] = h
         elif config.LSTMandTPR:
+            cell = BasicLSTMCell(d, state_is_tuple=True)
+            d_cell = SwitchableDropoutWrapper(cell, self.is_train, input_keep_prob=config.input_keep_prob)
             with tf.variable_scope("prepro"):
                 (fw_u, bw_u), ((_, fw_u_f), (_, bw_u_f)) = bidirectional_dynamic_rnn(d_cell, d_cell, qq, q_len, dtype='float', scope='u1')  # [N, J, d], [N, d]
                 if config.share_lstm_weights:
