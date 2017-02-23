@@ -25,6 +25,7 @@ flags.DEFINE_integer("num_gpus", 1, "num of gpus or cpus for computing gradients
 # Essential training and test options
 flags.DEFINE_string("mode", "test", "trains | test | forward [test]")
 flags.DEFINE_boolean("load", True, "load saved data? [True]")
+flags.DEFINE_boolean("load", True, "load saved data? [True]")
 flags.DEFINE_bool("single", False, "supervise only the answer sentence? [False]")
 flags.DEFINE_boolean("debug", False, "Debugging mode? [False]")
 flags.DEFINE_bool('load_ema', True, "load exponential average of variables when testing?  [True]")
