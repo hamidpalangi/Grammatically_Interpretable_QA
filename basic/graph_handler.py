@@ -21,7 +21,7 @@ class GraphHandler(object):
 
     def initialize(self, sess):
         sess.run(tf.initialize_all_variables())
-        if self.config.load:
+        if self.config.load or self.config.resumeTrain:
             self._load(sess)
 
         if self.config.mode == 'train':

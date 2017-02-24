@@ -25,7 +25,6 @@ flags.DEFINE_integer("num_gpus", 1, "num of gpus or cpus for computing gradients
 # Essential training and test options
 flags.DEFINE_string("mode", "test", "trains | test | forward [test]")
 flags.DEFINE_boolean("load", True, "load saved data? [True]")
-flags.DEFINE_boolean("load", True, "load saved data? [True]")
 flags.DEFINE_bool("single", False, "supervise only the answer sentence? [False]")
 flags.DEFINE_boolean("debug", False, "Debugging mode? [False]")
 flags.DEFINE_bool('load_ema', True, "load exponential average of variables when testing?  [True]")
@@ -101,16 +100,18 @@ flags.DEFINE_bool("dynamic_att", False, "Dynamic attention [False]")
 
 # TPR parameters
 flags.DEFINE_bool("LSTMandTPR", False, "Use TPR + LSTM concatenated in phrase embedding layer?"
-                                       "Note that here TPR and LSTM are two independent cells. [Flase]")
+                                       "Note that here TPR and LSTM are two independent cells. [True]")
 flags.DEFINE_bool("justTPR", False, "Use just TPR not LSTM in phrase embedding layer? [False]")
 flags.DEFINE_bool("justLSTM", False, "Use just LSTM not TPR in phrase embedding layer? [False]")
-flags.DEFINE_bool("TPRLSTMCell", True, "Use newly defined mixed TPR-LSTM cell in phrase embedding layer? [True]")
+flags.DEFINE_bool("TPRLSTMCell", True, "Use newly defined mixed TPR-LSTM cell in phrase embedding layer? [False]")
 flags.DEFINE_bool("share_tpr_weights", True, "Share TPR weights between query side and text side? [True]")
 flags.DEFINE_integer("nSymbols", 100, "# of Symbols in TPR [100]")
 flags.DEFINE_integer("dSymbols", 10, "size of Symbol embedding in TPR [10]")
 flags.DEFINE_integer("nRoles", 20, "# of Roles in TPR [20]")
 flags.DEFINE_integer("dRoles", 10, "size of Role embedding in TPR [10]")
-# TODO: Perofrm hyperparameter search to adjust default values.
+
+# Resume training
+flags.DEFINE_bool("resumeTrain", False, "Resume training from the iteration specified in the checkpoint? [False]")
 
 
 def main(_):
