@@ -176,21 +176,21 @@ class TPRLSTMCell(tf.nn.rnn_cell.RNNCell):
             output = tf.concat(1, [new_h, new_Tvec])
         return output, new_state
 
-# _TPRregTuple = collections.namedtuple("TPRregTuple", ("aF", "aR", "Tvec"))
-# class TPRregTuple(_TPRregTuple):
-#     """
-#     Using Tuple is faster than simply concatenating states and then using tf.split.
-#     Stores three elements (aF, aR, Tvec)
-#     """
-#     __slots__ = ()
-#     @property
-#     def dtype(self):
-#         (aF, aR, Tvec) = self
-#         if not aF.dtype == aR.dtype:
-#             raise TypeError("Inconsistent internal state: %s vs %s" % (str(aF.dtype), str(aR.dtype)))
-#         elif not aF.dtype == Tvec.dtype:
-#             raise TypeError("Inconsistent internal state: %s vs %s" % (str(aF.dtype), str(Tvec.dtype)))
-#         return aF.dtype
+_TPRregTuple = collections.namedtuple("TPRregTuple", ("aF", "aR", "Tvec"))
+class TPRregTuple(_TPRregTuple):
+    """
+    Using Tuple is faster than simply concatenating states and then using tf.split.
+    Stores three elements (aF, aR, Tvec)
+    """
+    __slots__ = ()
+    @property
+    def dtype(self):
+        (aF, aR, Tvec) = self
+        if not aF.dtype == aR.dtype:
+            raise TypeError("Inconsistent internal state: %s vs %s" % (str(aF.dtype), str(aR.dtype)))
+        elif not aF.dtype == Tvec.dtype:
+            raise TypeError("Inconsistent internal state: %s vs %s" % (str(aF.dtype), str(Tvec.dtype)))
+        return aF.dtype
 
 class TPRCellReg(tf.nn.rnn_cell.RNNCell):
 
@@ -222,12 +222,11 @@ class TPRCellReg(tf.nn.rnn_cell.RNNCell):
 
     @property
     def state_size(self):
-        return self._dimT
+        return TPRregTuple(self._nSymbols, self._nRoles, self._dimT)
 
     @property
     def output_size(self):
-        # return TPRregTuple(self._nSymbols, self._nRoles, self._dimT)
-        return self._nSymbols + self._nRoles + self._dimT
+        return self._dimT
 
     def __call__(self, inputs, state, scope=None):
         """
@@ -237,12 +236,13 @@ class TPRCellReg(tf.nn.rnn_cell.RNNCell):
         :return:
         """
         with tf.variable_scope(scope or type(self).__name__):
+            aF, aR, Tvec = state
             with tf.variable_scope("BindVecs_aF"):
                 # Dimensionality of aF will be [batchsize x nSymbols].
-                aF = self._activation(tf.nn.rnn_cell._linear([inputs, state], output_size=self._nSymbols, bias=True))
+                aF = self._activation(tf.nn.rnn_cell._linear([inputs, Tvec], output_size=self._nSymbols, bias=True))
             with tf.variable_scope("BindVecs_aR"):
                 # Dimensionality of aR will be [batchsize x nRoles].
-                aR = self._activation( tf.nn.rnn_cell._linear([inputs, state], output_size=self._nRoles, bias=True) )
+                aR = self._activation( tf.nn.rnn_cell._linear([inputs, Tvec], output_size=self._nRoles, bias=True) )
             with tf.variable_scope("FillerRoles"):
                 F = tf.get_variable(name="F", shape=[self._nSymbols, self._dSymbols])
                 R = tf.get_variable(name="R", shape=[self._nRoles, self._dRoles])
@@ -257,7 +257,6 @@ class TPRCellReg(tf.nn.rnn_cell.RNNCell):
                 itemR = tf.expand_dims(itemR, 2)
             T = tf.batch_matmul( x = itemF, y = itemR, adj_y=True)
             # Vectorizing T. The dimension of new_state will be [batchsize x (dSymbols*dRoles)]
-            new_state = tf.reshape(T, shape=[tf.shape(T)[0], -1]) # T_vec
-            # output = TPRregTuple(aF, aR, new_state)
-            output = tf.concat(1, [aF, aR, new_state])
-        return output, new_state
+            new_Tvec = tf.reshape(T, shape=[tf.shape(T)[0], -1]) # This is also the output of TPR cell.
+            new_state = TPRregTuple(aF, aR, new_Tvec)
+        return new_Tvec, new_state
