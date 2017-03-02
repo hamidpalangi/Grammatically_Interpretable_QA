@@ -8,9 +8,10 @@ from tensorflow.python.ops.rnn_cell import BasicLSTMCell
 from basic.read_data import DataSet
 from my.tensorflow import get_initializer
 from my.tensorflow.nn import softsel, get_logits, highway_network, multi_conv1d
-from my.tensorflow.rnn import bidirectional_dynamic_rnn, dynamic_rnn
+from my.tensorflow.rnn import bidirectional_dynamic_rnn, dynamic_rnn, bidirectional_dynamic_rnn_4reg
 from my.tensorflow.rnn_cell import SwitchableDropoutWrapper, AttentionCell
 from my.tensorflow.tpr import TPRCell, TPRLSTMCell, TPRCellReg
+from basic.Regularizers import Reg_eq_1_4
 
 
 def get_multi_gpu_models(config):
@@ -140,29 +141,30 @@ class Model(object):
 
         if config.justTPR:
             # TPR model
+            dimT = config.dSymbols * config.dRoles
             if config.TPRregularizer1:
                 tpr_cell = TPRCellReg(config.nSymbols, config.nRoles, config.dSymbols, config.dRoles)
             else:
                 tpr_cell = TPRCell(config.nSymbols, config.nRoles, config.dSymbols, config.dRoles)
             with tf.variable_scope("tpr"):
                 if config.TPRregularizer1:
-                    (fw_uTPR, bw_uTPR) , ( (fw_u_aF, fw_u_aR, _), (bw_u_aF, bw_u_aR, _) ) = \
-                        bidirectional_dynamic_rnn(tpr_cell, tpr_cell, qq, q_len, dtype='float', scope='u1TPR')  # [N, J, d], [N, d]
+                    ( (fw_u_aF, fw_u_aR, fw_uTPR), (bw_u_aF, bw_u_aR, bw_uTPR) ) , _ = \
+                        bidirectional_dynamic_rnn_4reg(tpr_cell, tpr_cell, qq, config.nSymbols, config.nRoles, dimT, q_len, dtype='float', scope='u1TPR')  # [N, J, d], [N, d]
                 else:
                     (fw_uTPR, bw_uTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, qq, q_len, dtype='float', scope='u1TPR')  # [N, J, d], [N, d]
                 u = tf.concat(2, [fw_uTPR, bw_uTPR])
                 if config.share_tpr_weights:
                     tf.get_variable_scope().reuse_variables()
                     if config.TPRregularizer1:
-                        (fw_hTPR, bw_hTPR) , ((fw_h_aF, fw_h_aR, _), (bw_h_aF, bw_h_aR, _)) = \
-                            bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='u1TPR')  # [N, M, JX, 2d]
+                        ((fw_h_aF, fw_h_aR, fw_hTPR), (bw_h_aF, bw_h_aR, bw_hTPR)) , _ = \
+                            bidirectional_dynamic_rnn_4reg(tpr_cell, tpr_cell, xx, config.nSymbols, config.nRoles, dimT, x_len, dtype='float', scope='u1TPR')  # [N, M, JX, 2d]
                     else:
                         (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='u1TPR')  # [N, M, JX, 2d]
                     h = tf.concat(3, [fw_hTPR, bw_hTPR])  # [N, M, JX, 2d]
                 else:
                     if config.TPRregularizer1:
-                        (fw_hTPR, bw_hTPR) , ((fw_h_aF, fw_h_aR, _), (bw_h_aF, bw_h_aR, _)) = \
-                            bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='h1TPR')  # [N, M, JX, 2d]
+                        ((fw_h_aF, fw_h_aR, fw_hTPR), (bw_h_aF, bw_h_aR, bw_hTPR)) , _ = \
+                            bidirectional_dynamic_rnn_4reg(tpr_cell, tpr_cell, xx, config.nSymbols, config.nRoles, dimT, x_len, dtype='float', scope='h1TPR')  # [N, M, JX, 2d]
                     else:
                         (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='h1TPR')  # [N, M, JX, 2d]
                     h = tf.concat(3, [fw_hTPR, bw_hTPR])  # [N, M, JX, 2d]
@@ -263,6 +265,18 @@ class Model(object):
             self.yp = yp
             self.yp2 = yp2
 
+            if config.TPRregularizer1:
+                # Question side
+                self.fw_u_aF = fw_u_aF
+                self.bw_u_aF = bw_u_aF
+                self.fw_u_aR = fw_u_aR
+                self.bw_u_aR = bw_u_aR
+                # Context side
+                self.fw_h_aF = fw_h_aF
+                self.bw_h_aF = bw_h_aF
+                self.fw_h_aR = fw_h_aR
+                self.bw_h_aR = bw_h_aR
+
     def _build_loss(self):
         config = self.config
         JX = tf.shape(self.x)[2]
@@ -273,9 +287,24 @@ class Model(object):
             self.logits, tf.cast(tf.reshape(self.y, [-1, M * JX]), 'float'))
         ce_loss = tf.reduce_mean(loss_mask * losses)
         tf.add_to_collection('losses', ce_loss)
+
         ce_loss2 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
             self.logits2, tf.cast(tf.reshape(self.y2, [-1, M * JX]), 'float')))
         tf.add_to_collection("losses", ce_loss2)
+
+        if config.TPRregularizer1:
+            # Question side
+            reg_fw_u_aF = Reg_eq_1_4(self.fw_u_aF)
+            reg_fw_u_aR = Reg_eq_1_4(self.fw_u_aR)
+            reg_bw_u_aF = Reg_eq_1_4(self.bw_u_aF)
+            reg_bw_u_aR = Reg_eq_1_4(self.bw_u_aR)
+            # Context side
+            reg_fw_h_aF = Reg_eq_1_4(self.fw_h_aF)
+            reg_fw_h_aR = Reg_eq_1_4(self.fw_h_aR)
+            reg_bw_h_aF = Reg_eq_1_4(self.bw_h_aF)
+            reg_bw_h_aR = Reg_eq_1_4(self.bw_h_aR)
+
+
 
         self.loss = tf.add_n(tf.get_collection('losses', scope=self.scope), name='loss')
         tf.scalar_summary(self.loss.op.name, self.loss)

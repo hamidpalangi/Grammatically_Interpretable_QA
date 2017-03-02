@@ -222,11 +222,11 @@ class TPRCellReg(tf.nn.rnn_cell.RNNCell):
 
     @property
     def state_size(self):
-        return TPRregTuple(self._nSymbols, self._nRoles, self._dimT)
+        return self._dimT
 
     @property
     def output_size(self):
-        return self._dimT
+        return self._nSymbols + self._nRoles + self._dimT
 
     def __call__(self, inputs, state, scope=None):
         """
@@ -236,7 +236,7 @@ class TPRCellReg(tf.nn.rnn_cell.RNNCell):
         :return:
         """
         with tf.variable_scope(scope or type(self).__name__):
-            aF, aR, Tvec = state
+            Tvec = state
             with tf.variable_scope("BindVecs_aF"):
                 # Dimensionality of aF will be [batchsize x nSymbols].
                 aF = self._activation(tf.nn.rnn_cell._linear([inputs, Tvec], output_size=self._nSymbols, bias=True))
@@ -258,5 +258,6 @@ class TPRCellReg(tf.nn.rnn_cell.RNNCell):
             T = tf.batch_matmul( x = itemF, y = itemR, adj_y=True)
             # Vectorizing T. The dimension of new_state will be [batchsize x (dSymbols*dRoles)]
             new_Tvec = tf.reshape(T, shape=[tf.shape(T)[0], -1]) # This is also the output of TPR cell.
-            new_state = TPRregTuple(aF, aR, new_Tvec)
-        return new_Tvec, new_state
+            new_state = new_Tvec
+            output = tf.concat(1, [aF, aR, new_Tvec])
+        return output, new_state
