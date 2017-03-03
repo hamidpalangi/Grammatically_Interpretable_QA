@@ -110,6 +110,8 @@ flags.DEFINE_integer("dSymbols", 10, "size of Symbol embedding in TPR [10]")
 flags.DEFINE_integer("nRoles", 20, "# of Roles in TPR [20]")
 flags.DEFINE_integer("dRoles", 10, "size of Role embedding in TPR [10]")
 flags.DEFINE_bool("TPRregularizer1", False, "Use regularization in eq. (1.4) of 'TPR_ver0_0.pdf'? [False]")
+flags.DEFINE_float("cF", 0.8, "Filler regularization weight [0.8]")
+flags.DEFINE_float("cR", 0.8, "Role regularization weight [0.8]")
 
 # Resume training
 flags.DEFINE_bool("resumeTrain", False, "Resume training from the iteration specified in the checkpoint? [False]")

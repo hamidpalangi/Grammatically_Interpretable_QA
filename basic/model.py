@@ -294,17 +294,22 @@ class Model(object):
 
         if config.TPRregularizer1:
             # Question side
-            reg_fw_u_aF = Reg_eq_1_4(self.fw_u_aF)
-            reg_fw_u_aR = Reg_eq_1_4(self.fw_u_aR)
-            reg_bw_u_aF = Reg_eq_1_4(self.bw_u_aF)
-            reg_bw_u_aR = Reg_eq_1_4(self.bw_u_aR)
+            reg_fw_u_aF = Reg_eq_1_4(self.fw_u_aF, Qside=True, mask_it=self.q_mask)
+            reg_fw_u_aR = Reg_eq_1_4(self.fw_u_aR, Qside=True, mask_it=self.q_mask)
+            reg_bw_u_aF = Reg_eq_1_4(self.bw_u_aF, Qside=True, mask_it=self.q_mask)
+            reg_bw_u_aR = Reg_eq_1_4(self.bw_u_aR, Qside=True, mask_it=self.q_mask)
+            loss_mask_u = tf.reduce_max(tf.cast(self.q_mask, 'float'), 1) # To make sure there is no empty mini-batch member.
+            reg_u = tf.reduce_mean(loss_mask_u * (reg_fw_u_aF + reg_fw_u_aR + reg_bw_u_aF + reg_bw_u_aR))
             # Context side
-            reg_fw_h_aF = Reg_eq_1_4(self.fw_h_aF)
-            reg_fw_h_aR = Reg_eq_1_4(self.fw_h_aR)
-            reg_bw_h_aF = Reg_eq_1_4(self.bw_h_aF)
-            reg_bw_h_aR = Reg_eq_1_4(self.bw_h_aR)
+            reg_fw_h_aF = Reg_eq_1_4(self.fw_h_aF, Qside=False, mask_it=self.x_mask)
+            reg_fw_h_aR = Reg_eq_1_4(self.fw_h_aR, Qside=False, mask_it=self.x_mask)
+            reg_bw_h_aF = Reg_eq_1_4(self.bw_h_aF, Qside=False, mask_it=self.x_mask)
+            reg_bw_h_aR = Reg_eq_1_4(self.bw_h_aR, Qside=False, mask_it=self.x_mask)
+            loss_mask_h = tf.reduce_max( tf.reduce_max(tf.cast(self.x_mask, 'float'), 1) , 1 ) # To make sure there is no empty mini-batch member.
+            reg_h = tf.reduce_mean(loss_mask_h * (reg_fw_h_aF + reg_fw_h_aR + reg_bw_h_aF + reg_bw_h_aR))
 
-
+            tf.add_to_collection("losses", reg_u)
+            tf.add_to_collection("losses", reg_h)
 
         self.loss = tf.add_n(tf.get_collection('losses', scope=self.scope), name='loss')
         tf.scalar_summary(self.loss.op.name, self.loss)
