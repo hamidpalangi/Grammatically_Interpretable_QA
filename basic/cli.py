@@ -118,6 +118,7 @@ flags.DEFINE_bool("resumeTrain", False, "Resume training from the iteration spec
 
 
 def main(_):
+    print("A MESSAGE FROM REGULARIZERS.PY!")
     config = flags.FLAGS
 
     config.out_dir = os.path.join(config.out_base_dir, config.model_name, str(config.run_id).zfill(2))
