@@ -18,7 +18,7 @@ def Reg_eq_1_4(a, Qside, mask_it):
 
     :return: One item in regularization term in eq. (1.4) of TPR_ver0_0.pdf document. The output shape is [batchsize].
     """
-
+    print("A MESSAGE FROM REGULARIZERS.PY!")
     a2 = tf.multiply(a, a)
     item1 = a2 + tf.multiply(a2, a2) - 2 * tf.multiply(a, a2)
 
