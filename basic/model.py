@@ -277,22 +277,22 @@ class Model(object):
                 self.bw_h_aF = bw_h_aF
                 self.fw_h_aR = fw_h_aR
                 self.bw_h_aR = bw_h_aR
-            if config.TPRvis:
-                # For visualization
-                # question side
-                self.tensor_dict['fw_u_aF'] = fw_u_aF
-                self.tensor_dict['fw_u_aR'] = fw_u_aR
-                self.tensor_dict['bw_u_aF'] = bw_u_aF
-                self.tensor_dict['bw_u_aR'] = bw_u_aR
-                # context side
-                self.tensor_dict['fw_h_aF'] = fw_h_aF
-                self.tensor_dict['fw_h_aR'] = fw_h_aR
-                self.tensor_dict['bw_h_aF'] = bw_h_aF
-                self.tensor_dict['bw_h_aR'] = bw_h_aR
-                # add different summaries
-                tensorHist(self.tensor_dict, config.which_words)
-                sparsity_vis(self.tensor_dict, config.which_words)
-                norm_vis2(self.tensor_dict, config.which_words)
+                if config.TPRvis:
+                    # For visualization
+                    # question side
+                    self.tensor_dict['fw_u_aF'] = fw_u_aF
+                    self.tensor_dict['fw_u_aR'] = fw_u_aR
+                    self.tensor_dict['bw_u_aF'] = bw_u_aF
+                    self.tensor_dict['bw_u_aR'] = bw_u_aR
+                    # context side
+                    self.tensor_dict['fw_h_aF'] = fw_h_aF
+                    self.tensor_dict['fw_h_aR'] = fw_h_aR
+                    self.tensor_dict['bw_h_aF'] = bw_h_aF
+                    self.tensor_dict['bw_h_aR'] = bw_h_aR
+                    # add different summaries
+                    tensorHist(self.tensor_dict, config.which_words)
+                    sparsity_vis(self.tensor_dict, config.which_words)
+                    norm_vis2(self.tensor_dict, config.which_words)
 
     def _build_loss(self):
         config = self.config
