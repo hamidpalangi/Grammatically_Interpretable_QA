@@ -116,9 +116,13 @@ flags.DEFINE_float("cR", 0.8, "Role regularization weight [0.8]")
 # Resume training
 flags.DEFINE_bool("resumeTrain", False, "Resume training from the iteration specified in the checkpoint? [False]")
 
+# TPR Visualization Parameters [also check parameters under "Logging and saving options" above]
+flags.DEFINE_string("which_words", "1,5", "which words to track for visualization in question / context side [1,5]")
+flags.DEFINE_bool("TPRvis", False, "TPR visualization? [False]")
 
 def main(_):
     config = flags.FLAGS
+    config.which_words = [int(w) for w in config.which_words.split(",")]
 
     config.out_dir = os.path.join(config.out_base_dir, config.model_name, str(config.run_id).zfill(2))
 
