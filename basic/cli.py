@@ -124,6 +124,8 @@ def main(_):
     config = flags.FLAGS
     config.which_words = [int(w) for w in config.which_words.split(",")]
 
+    print("Hello World!")
+
     config.out_dir = os.path.join(config.out_base_dir, config.model_name, str(config.run_id).zfill(2))
 
     m(config)
