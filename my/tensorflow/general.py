@@ -98,7 +98,7 @@ def average_gradients(tower_grads):
 def mask(val, mask, name=None):
     if name is None:
         name = 'mask'
-    return tf.mul(val, tf.cast(mask, 'float'), name=name)
+    return tf.mul(val, tf.cast(mask, 'float'), name=name) # Element wise multiplication.
 
 
 def exp_mask(val, mask, name=None):

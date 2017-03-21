@@ -103,19 +103,26 @@ flags.DEFINE_bool("LSTMandTPR", False, "Use TPR + LSTM concatenated in phrase em
                                        "Note that here TPR and LSTM are two independent cells. [True]")
 flags.DEFINE_bool("justTPR", False, "Use just TPR not LSTM in phrase embedding layer? [False]")
 flags.DEFINE_bool("justLSTM", False, "Use just LSTM not TPR in phrase embedding layer? [False]")
-flags.DEFINE_bool("TPRLSTMCell", True, "Use newly defined mixed TPR-LSTM cell in phrase embedding layer? [False]")
+flags.DEFINE_bool("TPRLSTMCell", False, "Use newly defined mixed TPR-LSTM cell in phrase embedding layer? [False]")
 flags.DEFINE_bool("share_tpr_weights", True, "Share TPR weights between query side and text side? [True]")
 flags.DEFINE_integer("nSymbols", 100, "# of Symbols in TPR [100]")
 flags.DEFINE_integer("dSymbols", 10, "size of Symbol embedding in TPR [10]")
 flags.DEFINE_integer("nRoles", 20, "# of Roles in TPR [20]")
 flags.DEFINE_integer("dRoles", 10, "size of Role embedding in TPR [10]")
+flags.DEFINE_bool("TPRregularizer1", False, "Use regularization in eq. (1.4) of 'TPR_ver0_0.pdf'? [False]")
+flags.DEFINE_float("cF", 0.8, "Filler regularization weight [0.8]")
+flags.DEFINE_float("cR", 0.8, "Role regularization weight [0.8]")
 
 # Resume training
 flags.DEFINE_bool("resumeTrain", False, "Resume training from the iteration specified in the checkpoint? [False]")
 
+# TPR Visualization Parameters [also check parameters under "Logging and saving options" above]
+flags.DEFINE_string("which_words", "1,5", "which words to track for visualization in question / context side [1,5]")
+flags.DEFINE_bool("TPRvis", False, "TPR visualization? [False]")
 
 def main(_):
     config = flags.FLAGS
+    config.which_words = [int(w) for w in config.which_words.split(",")]
 
     config.out_dir = os.path.join(config.out_base_dir, config.model_name, str(config.run_id).zfill(2))
 
