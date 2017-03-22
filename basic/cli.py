@@ -119,11 +119,13 @@ flags.DEFINE_bool("resumeTrain", False, "Resume training from the iteration spec
 # TPR Visualization Parameters [also check parameters under "Logging and saving options" above]
 flags.DEFINE_string("which_words", "1,5", "which words to track for visualization in question / context side [1,5]")
 flags.DEFINE_bool("TPRvis", False, "TPR visualization? [False]")
+flags.DEFINE_bool("JustLastIterVis", False, "Show activations of just last iteration? [False]")
 
 def main(_):
     config = flags.FLAGS
     config.which_words = [int(w) for w in config.which_words.split(",")]
-
+    if config.JustLastIterVis:
+        config.log_period = config.num_steps
     config.out_dir = os.path.join(config.out_base_dir, config.model_name, str(config.run_id).zfill(2))
 
     m(config)

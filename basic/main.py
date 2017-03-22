@@ -59,6 +59,8 @@ def _config_debug(config):
         config.save_period = 1
         config.val_num_batches = 2
         config.test_num_batches = 2
+        if config.JustLastIterVis:
+            config.log_period = config.num_steps
 
 
 def _train(config):
