@@ -39,6 +39,7 @@ def set_dirs(config):
     config.log_dir = os.path.join(config.out_dir, "log")
     config.eval_dir = os.path.join(config.out_dir, "eval")
     config.answer_dir = os.path.join(config.out_dir, "answer")
+    config.TPRvis_dir = os.path.join(config.out_dir, "TPRvis")
     if not os.path.exists(config.out_dir):
         os.makedirs(config.out_dir)
     if not os.path.exists(config.save_dir):
@@ -49,6 +50,8 @@ def set_dirs(config):
         os.mkdir(config.answer_dir)
     if not os.path.exists(config.eval_dir):
         os.mkdir(config.eval_dir)
+    if not os.path.exists(config.TPRvis_dir):
+        os.mkdir(config.TPRvis_dir)
 
 
 def _config_debug(config):

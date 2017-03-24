@@ -7,6 +7,11 @@ from my.tensorflow import padded_reshape
 from my.utils import argmax
 from squad.utils import get_phrase, get_best_span
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+
 
 class Evaluation(object):
     def __init__(self, data_type, global_step, idxs, yp, tensor_dict=None):
@@ -292,6 +297,22 @@ class F1Evaluator(LabeledEvaluator):
         correct = [self.__class__.compare2(yi, span) for yi, span in zip(y, spans)]
         f1s = [self.__class__.span_f1(yi, span) for yi, span in zip(y, spans)]
         tensor_dict = dict(zip(self.tensor_dict.keys(), vals))
+        if self.config.mode == "test" and self.config.TPRvis:
+            which_q = 0
+            question =data_set.data["q"][which_q]
+            q_len = len(question)
+            fw_u_aR = tensor_dict["fw_u_aR"][which_q][:q_len]
+            # Visualize each question
+            fig = plt.figure()
+            fig.add_subplot(1, 1, 1)
+            fig.subplots_adjust(top=0.85)
+            plt.matshow(fw_u_aR, interpolation='none', cmap=plt.cm.ocean)
+            plt.xlabel("Role Index in aR")
+            plt.ylabel("Word Index in Sentence")
+            plt.title(" ".join(question), y=1.15, fontsize=8)
+            plt.colorbar()
+            plt.show()
+            plt.savefig(self.config.TPRvis_dir + "/dataID_" + str(idxs[which_q]) + "_fw_u_aR.png")
         e = F1Evaluation(data_set.data_type, int(global_step), idxs, yp.tolist(), yp2.tolist(), y,
                          correct, float(loss), f1s, id2answer_dict, tensor_dict=tensor_dict)
         return e
