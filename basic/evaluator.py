@@ -10,6 +10,7 @@ from squad.utils import get_phrase, get_best_span
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from basic.TPR_Visualization import forceAspect
 
 
 
@@ -304,14 +305,16 @@ class F1Evaluator(LabeledEvaluator):
             fw_u_aR = tensor_dict["fw_u_aR"][which_q][:q_len]
             # Visualize each question
             fig = plt.figure()
-            fig.add_subplot(1, 1, 1)
+            ax = fig.add_subplot(1, 1, 1)
             fig.subplots_adjust(top=0.85)
-            plt.matshow(fw_u_aR, interpolation='none', cmap=plt.cm.ocean)
-            plt.xlabel("Role Index in aR")
-            plt.ylabel("Word Index in Sentence")
-            plt.title(" ".join(question), y=1.15, fontsize=8)
-            plt.colorbar()
+            # plt.title("aR")
+            cax = ax.matshow(fw_u_aR, interpolation='none', cmap=plt.cm.ocean_r)
+            fig.colorbar(cax)
+            ax.set_yticklabels([""]+question, fontsize=8)
+            ax.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(1))
             plt.show()
+            # ax.set_aspect("equal")
+            forceAspect(ax, aspect=1)
             plt.savefig(self.config.TPRvis_dir + "/dataID_" + str(idxs[which_q]) + "_fw_u_aR.png")
         e = F1Evaluation(data_set.data_type, int(global_step), idxs, yp.tolist(), yp2.tolist(), y,
                          correct, float(loss), f1s, id2answer_dict, tensor_dict=tensor_dict)

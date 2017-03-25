@@ -120,3 +120,9 @@ def euclidean_norm(a):
     a = tf.square(a)
     a = tf.reduce_sum(a)
     return tf.sqrt(a)
+
+
+def forceAspect(ax, aspect=1):
+    im = ax.get_images()
+    extent = im[0].get_extent()
+    ax.set_aspect(abs((extent[1] - extent[0]) / (extent[3] - extent[2])) / aspect)
