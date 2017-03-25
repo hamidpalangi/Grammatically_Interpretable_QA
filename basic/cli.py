@@ -120,6 +120,7 @@ flags.DEFINE_bool("resumeTrain", False, "Resume training from the iteration spec
 flags.DEFINE_string("which_words", "1,5", "which words to track for visualization in question / context side [1,5]")
 flags.DEFINE_bool("TPRvis", False, "TPR visualization? [False]")
 flags.DEFINE_bool("JustLastIterVis", False, "Show activations of just last iteration? [False]")
+flags.DEFINE_integer("which_q", 0, "which question from each minibatch in test to use for aR and aF visualization [0]")
 
 def main(_):
     config = flags.FLAGS

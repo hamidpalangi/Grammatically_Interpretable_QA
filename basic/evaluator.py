@@ -7,12 +7,7 @@ from my.tensorflow import padded_reshape
 from my.utils import argmax
 from squad.utils import get_phrase, get_best_span
 
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from basic.TPR_Visualization import forceAspect
-
-
+from basic.TPR_Visualization import sentence2role_vis
 
 class Evaluation(object):
     def __init__(self, data_type, global_step, idxs, yp, tensor_dict=None):
@@ -244,6 +239,7 @@ class F1Evaluator(LabeledEvaluator):
         super(F1Evaluator, self).__init__(config, model, tensor_dict=tensor_dict)
         self.yp2 = model.yp2
         self.loss = model.loss
+        self.fig = None
 
     def get_evaluation(self, sess, batch):
         idxs, data_set = self._split_batch(batch)
@@ -298,30 +294,10 @@ class F1Evaluator(LabeledEvaluator):
         correct = [self.__class__.compare2(yi, span) for yi, span in zip(y, spans)]
         f1s = [self.__class__.span_f1(yi, span) for yi, span in zip(y, spans)]
         tensor_dict = dict(zip(self.tensor_dict.keys(), vals))
+        # Visualization
         if self.config.mode == "test" and self.config.TPRvis:
-            which_q = 0
-            question =data_set.data["q"][which_q]
-            q_len = len(question)
-            fw_u_aR = tensor_dict["fw_u_aR"][which_q][:q_len]
-            # Visualize each question
-            fig = plt.figure()
-            ax = fig.add_subplot(1, 1, 1)
-            fig.subplots_adjust(top=0.85)
-            plt.title("aR", fontsize=8)
-            cax = ax.matshow(fw_u_aR, interpolation='none', cmap=plt.cm.ocean_r)
-            fig.colorbar(cax)
-            ax.set_yticklabels([""]+question, fontsize=8)
-            # ax.tick_params(axis="x", labelsize=8)
-            ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(5))
-            ax.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(1))
-            # Minor ticks
-            ax.set_xticks(np.arange(-.5, self.config.nRoles, 1), minor=True)
-            ax.set_yticks(np.arange(-.5, q_len, 1), minor=True)
-            ax.grid(which="minor", color="w", linestyle="-", linewidth=2)
-            plt.show()
-            # ax.set_aspect("equal")
-            forceAspect(ax, aspect=1)
-            plt.savefig(self.config.TPRvis_dir + "/dataID_" + str(idxs[which_q]) + "_fw_u_aR.png")
+            sentence2role_vis(data_set, idxs, tensor_dict, self.config)
+
         e = F1Evaluation(data_set.data_type, int(global_step), idxs, yp.tolist(), yp2.tolist(), y,
                          correct, float(loss), f1s, id2answer_dict, tensor_dict=tensor_dict)
         return e

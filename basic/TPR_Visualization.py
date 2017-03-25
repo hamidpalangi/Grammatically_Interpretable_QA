@@ -1,6 +1,10 @@
 import tensorflow as tf
 import numpy as np
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 def norm_vis(T, which_words, data_type, summaries):
     """
     To visualize norm of fillers and roles vectors.
@@ -126,3 +130,24 @@ def forceAspect(ax, aspect=1):
     im = ax.get_images()
     extent = im[0].get_extent()
     ax.set_aspect(abs((extent[1] - extent[0]) / (extent[3] - extent[2])) / aspect)
+
+def sentence2role_vis(data_set, idxs, tensor_dict, config):
+    question = data_set.data["q"][config.which_q]
+    q_len = len(question)
+    fw_u_aR = tensor_dict["fw_u_aR"][config.which_q][:q_len]
+    # Visualize each question
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.set_xlabel("aR")
+    cax = ax.matshow(fw_u_aR, interpolation='none', cmap=plt.cm.ocean_r)
+    fig.colorbar(cax)
+    ax.set_yticklabels([""] + question, fontsize=8)
+    ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(5))
+    ax.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(1))
+    # Minor ticks
+    ax.set_xticks(np.arange(-.5, config.nRoles, 1), minor=True)
+    ax.set_yticks(np.arange(-.5, q_len, 1), minor=True)
+    ax.grid(which="minor", color="w", linestyle="-", linewidth=2)
+    plt.show()
+    forceAspect(ax, aspect=1)
+    plt.savefig(config.TPRvis_dir + "/dataID_" + str(idxs[config.which_q]) + "_fw_u_aR.png")
