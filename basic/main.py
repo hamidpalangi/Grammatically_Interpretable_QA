@@ -61,7 +61,7 @@ def _config_debug(config):
         config.log_period = 1
         config.save_period = 1
         config.val_num_batches = 2
-        config.test_num_batches = 2
+        config.test_num_batches = 3
         if config.JustLastIterVis:
             config.log_period = config.num_steps
 
