@@ -121,10 +121,13 @@ flags.DEFINE_string("which_words", "1,5", "which words to track for visualizatio
 flags.DEFINE_bool("TPRvis", False, "TPR visualization? [False]")
 flags.DEFINE_bool("JustLastIterVis", False, "Show activations of just last iteration? [False]")
 flags.DEFINE_integer("which_q", 0, "which question from each minibatch in test to use for aR and aF visualization [0]")
+flags.DEFINE_string("which_tensors2vis", "fw_u_aR,bw_u_aR,fw_u_aF,bw_u_aF",
+                    "which tensors to visualize ['fw_u_aR','bw_u_aR','fw_u_aF','bw_u_aF']")
 
 def main(_):
     config = flags.FLAGS
     config.which_words = [int(w) for w in config.which_words.split(",")]
+    config.which_tensors2vis = [tensor for tensor in config.which_tensors2vis.split(",")]
     if config.JustLastIterVis:
         config.log_period = config.num_steps
     config.out_dir = os.path.join(config.out_base_dir, config.model_name, str(config.run_id).zfill(2))

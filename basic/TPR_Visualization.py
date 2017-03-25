@@ -145,7 +145,11 @@ def sentence2role_vis(data_set, idxs, tensor_dict, config, tensor2vis):
     ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(5))
     ax.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(1))
     # Minor ticks
-    ax.set_xticks(np.arange(-.5, config.nRoles, 1), minor=True)
+    if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_h_aR", "bw_u_aR"]:
+        width = config.nRoles
+    else:
+        width = config.nSymbols
+    ax.set_xticks(np.arange(-.5, width, 1), minor=True)
     ax.set_yticks(np.arange(-.5, q_len, 1), minor=True)
     ax.grid(which="minor", color="w", linestyle="-", linewidth=2)
     plt.show()
