@@ -296,7 +296,8 @@ class F1Evaluator(LabeledEvaluator):
         tensor_dict = dict(zip(self.tensor_dict.keys(), vals))
         # Visualization
         if self.config.mode == "test" and self.config.TPRvis:
-            sentence2role_vis(data_set, idxs, tensor_dict, self.config)
+            tensor2vis = "fw_u_aR"
+            sentence2role_vis(data_set, idxs, tensor_dict, self.config, tensor2vis)
 
         e = F1Evaluation(data_set.data_type, int(global_step), idxs, yp.tolist(), yp2.tolist(), y,
                          correct, float(loss), f1s, id2answer_dict, tensor_dict=tensor_dict)

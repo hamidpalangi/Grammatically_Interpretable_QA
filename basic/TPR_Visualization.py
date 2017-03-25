@@ -131,14 +131,14 @@ def forceAspect(ax, aspect=1):
     extent = im[0].get_extent()
     ax.set_aspect(abs((extent[1] - extent[0]) / (extent[3] - extent[2])) / aspect)
 
-def sentence2role_vis(data_set, idxs, tensor_dict, config):
+def sentence2role_vis(data_set, idxs, tensor_dict, config, tensor2vis):
     question = data_set.data["q"][config.which_q]
     q_len = len(question)
-    fw_u_aR = tensor_dict["fw_u_aR"][config.which_q][:q_len]
+    fw_u_aR = tensor_dict[tensor2vis][config.which_q][:q_len]
     # Visualize each question
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    ax.set_xlabel("aR")
+    ax.set_xlabel(tensor2vis)
     cax = ax.matshow(fw_u_aR, interpolation='none', cmap=plt.cm.ocean_r)
     fig.colorbar(cax)
     ax.set_yticklabels([""] + question, fontsize=8)
@@ -150,4 +150,4 @@ def sentence2role_vis(data_set, idxs, tensor_dict, config):
     ax.grid(which="minor", color="w", linestyle="-", linewidth=2)
     plt.show()
     forceAspect(ax, aspect=1)
-    plt.savefig(config.TPRvis_dir + "/dataID_" + str(idxs[config.which_q]) + "_fw_u_aR.png")
+    plt.savefig(config.TPRvis_dir + "/dataID_" + str(idxs[config.which_q]) + "_" + tensor2vis + ".png")
