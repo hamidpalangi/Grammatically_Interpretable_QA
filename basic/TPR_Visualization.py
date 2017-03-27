@@ -131,7 +131,7 @@ def forceAspect(ax, aspect=1):
     extent = im[0].get_extent()
     ax.set_aspect(abs((extent[1] - extent[0]) / (extent[3] - extent[2])) / aspect)
 
-def sentence2role_vis(data_set, idxs, tensor_dict, config, tensor2vis):
+def sentence2role_filler_vis(data_set, idxs, tensor_dict, config, tensor2vis):
     question = data_set.data["q"][config.which_q]
     q_len = len(question)
     fw_u_aR = tensor_dict[tensor2vis][config.which_q][:q_len]
