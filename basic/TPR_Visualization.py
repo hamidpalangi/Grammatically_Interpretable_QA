@@ -134,18 +134,18 @@ def forceAspect(ax, aspect=1):
 def sentence2role_filler_vis(data_set, idxs, tensor_dict, config, tensor2vis):
     question = data_set.data["q"][config.which_q]
     q_len = len(question)
-    fw_u_aR = tensor_dict[tensor2vis][config.which_q][:q_len]
+    T = tensor_dict[tensor2vis][config.which_q][:q_len]
     # Visualize each question
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     ax.set_xlabel(tensor2vis)
-    cax = ax.matshow(fw_u_aR, interpolation='none', cmap=plt.cm.ocean_r)
+    cax = ax.matshow(T, interpolation='none', cmap=plt.cm.ocean_r)
     fig.colorbar(cax)
     ax.set_yticklabels([""] + question, fontsize=8)
     ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(5))
     ax.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(1))
     # Minor ticks
-    if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_h_aR", "bw_u_aR"]:
+    if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_h_aR", "bw_h_aR"]:
         width = config.nRoles
     else:
         width = config.nSymbols
