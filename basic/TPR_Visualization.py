@@ -131,14 +131,27 @@ def forceAspect(ax, aspect=1):
     extent = im[0].get_extent()
     ax.set_aspect(abs((extent[1] - extent[0]) / (extent[3] - extent[2])) / aspect)
 
-def sentence2role_filler_vis(data_set, idxs, tensor_dict, config, tensor2vis):
-    question = data_set.data["q"][config.which_q]
-    q_len = len(question)
-    T = tensor_dict[tensor2vis][config.which_q][:q_len]
-    # Visualize each question
-    fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1)
-    ax.set_xlabel(tensor2vis)
+def sentence2role_filler_vis(data_set, idxs, tensor_dict, config, tensor2vis, spans):
+    if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side
+        question = data_set.data["q"][config.which_q]
+        q_len = len(question)
+        T = tensor_dict[tensor2vis][config.which_q][:q_len]
+        # Visualize each question
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        ax.set_xlabel(tensor2vis)
+    else: # Context side
+        ans_start = spans[config.which_q][0][1]
+        ans_end = spans[config.which_q][1][1]
+        q_len = ans_end - ans_start
+        question = data_set.data["x"][config.which_q][0][ans_start:ans_end]
+        T = tensor_dict[tensor2vis][config.which_q][0][ans_start:ans_end]
+        # Visualize each question
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        ax.set_xlabel(tensor2vis)
+        ax.set_ylabel("PREDICTED ANSWER BY TRAINED MODEL")
+
     cax = ax.matshow(T, interpolation='none', cmap=plt.cm.ocean_r)
     fig.colorbar(cax)
     ax.set_yticklabels([""] + question, fontsize=8)

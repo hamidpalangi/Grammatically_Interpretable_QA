@@ -297,7 +297,7 @@ class F1Evaluator(LabeledEvaluator):
         # Visualization
         if self.config.mode == "test" and self.config.TPRvis:
             for tensor2vis in self.config.which_tensors2vis:
-                sentence2role_filler_vis(data_set, idxs, tensor_dict, self.config, tensor2vis)
+                sentence2role_filler_vis(data_set, idxs, tensor_dict, self.config, tensor2vis, spans)
 
         e = F1Evaluation(data_set.data_type, int(global_step), idxs, yp.tolist(), yp2.tolist(), y,
                          correct, float(loss), f1s, id2answer_dict, tensor_dict=tensor_dict)
