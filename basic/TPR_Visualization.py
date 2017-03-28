@@ -140,17 +140,31 @@ def sentence2role_filler_vis(data_set, idxs, tensor_dict, config, tensor2vis, sp
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         ax.set_xlabel(tensor2vis)
+        ax.set_ylabel("QUESTION")
     else: # Context side
-        ans_start = spans[config.which_q][0][1]
-        ans_end = spans[config.which_q][1][1]
-        q_len = ans_end - ans_start
-        question = data_set.data["x"][config.which_q][0][ans_start:ans_end]
-        T = tensor_dict[tensor2vis][config.which_q][0][ans_start:ans_end]
-        # Visualize each question
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1)
-        ax.set_xlabel(tensor2vis)
-        ax.set_ylabel("PREDICTED ANSWER BY TRAINED MODEL")
+        if config.Just_Answer_vis:
+            ans_start = spans[config.which_q][0][1]
+            ans_end = spans[config.which_q][1][1]
+            q_len = ans_end - ans_start
+            question = data_set.data["x"][config.which_q][0][ans_start:ans_end]
+            T = tensor_dict[tensor2vis][config.which_q][0][ans_start:ans_end]
+            # Visualize each answer
+            fig = plt.figure()
+            ax = fig.add_subplot(1, 1, 1)
+            ax.set_xlabel(tensor2vis + "\n Question: " + str(data_set.data["q"][config.which_q]), fontsize=8)
+            ax.set_ylabel("PREDICTED ANSWER BY TRAINED MODEL")
+        else:
+            question = data_set.data["x"][config.which_q][0]
+            q_len = len(question)
+            if q_len > 15:
+                q_len = 15
+            T = tensor_dict[tensor2vis][config.which_q][0][:q_len]
+            # Visualize each question
+            fig = plt.figure()
+            ax = fig.add_subplot(1, 1, 1)
+            ax.set_xlabel(tensor2vis + "\n Question: " + str(data_set.data["q"][config.which_q]), fontsize=8)
+            ax.set_ylabel("FIRST 15 WORDS OF THE PASSAGE.")
+
 
     cax = ax.matshow(T, interpolation='none', cmap=plt.cm.ocean_r)
     fig.colorbar(cax)

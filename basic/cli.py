@@ -123,6 +123,9 @@ flags.DEFINE_bool("JustLastIterVis", False, "Show activations of just last itera
 flags.DEFINE_integer("which_q", 0, "which member from each minibatch in test to use for aR and aF visualization [0]")
 flags.DEFINE_string("which_tensors2vis", "fw_u_aR,bw_u_aR,fw_u_aF,bw_u_aF",
                     "which tensors to visualize ['fw_u_aR','bw_u_aR','fw_u_aF','bw_u_aF']")
+flags.DEFINE_bool("Just_Answer_vis", True,
+                  "Just visualize the answer part of passage determined by start and end words."
+                  "If False, will visualize just first 15 words of passage. [True]")
 
 def main(_):
     config = flags.FLAGS
