@@ -187,7 +187,8 @@ def sentence2role_filler_vis(data_set, idxs, tensor_dict, config, tensor2vis, sp
 
 def write2csv(data_set, idxs, tensor_dict, config, tensor2vis):
     fl = open(config.TPRvis_dir + "/" + tensor2vis + "_test_set.csv", "a")
-    for which_q in range(config.batch_size):
+    nQuestions = len(data_set.data["q"])
+    for which_q in range(nQuestions):
         if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side
             question = data_set.data["q"][which_q]
             q_len = len(question)
