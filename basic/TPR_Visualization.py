@@ -186,7 +186,7 @@ def sentence2role_filler_vis(data_set, idxs, tensor_dict, config, tensor2vis, sp
     plt.savefig(config.TPRvis_dir + "/dataID_" + str(idxs[config.which_q]) + "_" + tensor2vis + ".png")
 
 def write2csv(data_set, idxs, tensor_dict, config, tensor2vis):
-    fl = open(config.TPRvis_dir + "/" + tensor2vis + "_test_set.csv", "a")
+    fl = open(config.TPRvis_dir + "/" + tensor2vis + "_nRoles_" + str(config.nRoles) + "_test_set.csv", "a")
     nQuestions = len(data_set.data["q"])
     for which_q in range(nQuestions):
         if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side
