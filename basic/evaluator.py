@@ -7,7 +7,7 @@ from my.tensorflow import padded_reshape
 from my.utils import argmax
 from squad.utils import get_phrase, get_best_span
 
-from basic.TPR_Visualization import sentence2role_filler_vis
+from basic.TPR_Visualization import sentence2role_filler_vis, write2csv
 
 class Evaluation(object):
     def __init__(self, data_type, global_step, idxs, yp, tensor_dict=None):
@@ -298,6 +298,9 @@ class F1Evaluator(LabeledEvaluator):
         if self.config.mode == "test" and self.config.TPRvis:
             for tensor2vis in self.config.which_tensors2vis:
                 sentence2role_filler_vis(data_set, idxs, tensor_dict, self.config, tensor2vis, spans)
+        if self.config.mode == "test" and self.config.write2csv:
+            for tensor2vis in self.config.which_tensors2vis:
+                write2csv(data_set, idxs, tensor_dict, self.config, tensor2vis)
 
         e = F1Evaluation(data_set.data_type, int(global_step), idxs, yp.tolist(), yp2.tolist(), y,
                          correct, float(loss), f1s, id2answer_dict, tensor_dict=tensor_dict)

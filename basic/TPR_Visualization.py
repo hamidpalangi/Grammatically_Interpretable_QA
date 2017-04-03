@@ -5,6 +5,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+import csv
+
 def norm_vis(T, which_words, data_type, summaries):
     """
     To visualize norm of fillers and roles vectors.
@@ -182,3 +184,21 @@ def sentence2role_filler_vis(data_set, idxs, tensor_dict, config, tensor2vis, sp
     plt.show()
     forceAspect(ax, aspect=1)
     plt.savefig(config.TPRvis_dir + "/dataID_" + str(idxs[config.which_q]) + "_" + tensor2vis + ".png")
+
+def write2csv(data_set, idxs, tensor_dict, config, tensor2vis):
+    if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side
+        question = data_set.data["q"][config.which_q]
+        q_len = len(question)
+        T = tensor_dict[tensor2vis][config.which_q][:q_len]
+
+    out = [[]]*q_len
+    for i in range(q_len):
+        out[i] = [idxs[config.which_q]] + [question[i]] + T[i].tolist()
+
+    fl = open(config.TPRvis_dir + "/" + tensor2vis + "_test_set.csv", "a")
+
+    writer = csv.writer(fl)
+    for row in out:
+        writer.writerow(row)
+
+    fl.close()

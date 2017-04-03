@@ -126,6 +126,7 @@ flags.DEFINE_string("which_tensors2vis", "fw_u_aR,bw_u_aR,fw_u_aF,bw_u_aF",
 flags.DEFINE_bool("Just_Answer_vis", True,
                   "Just visualize the answer part of passage determined by start and end words."
                   "If False, will visualize just first 15 words of passage. [True]")
+flags.DEFINE_bool("write2csv", False, "Write aF and aR per word in the test set to a csv file. [False]")
 
 def main(_):
     config = flags.FLAGS
