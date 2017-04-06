@@ -136,6 +136,8 @@ def main(_):
         config.log_period = config.num_steps
     config.out_dir = os.path.join(config.out_base_dir, config.model_name, str(config.run_id).zfill(2))
 
+    a = "Hello world!"
+
     m(config)
 
 if __name__ == "__main__":
