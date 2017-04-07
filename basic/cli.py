@@ -123,10 +123,20 @@ flags.DEFINE_bool("JustLastIterVis", False, "Show activations of just last itera
 flags.DEFINE_integer("which_q", 0, "which member from each minibatch in test to use for aR and aF visualization [0]")
 flags.DEFINE_string("which_tensors2vis", "fw_u_aR,bw_u_aR,fw_u_aF,bw_u_aF",
                     "which tensors to visualize ['fw_u_aR','bw_u_aR','fw_u_aF','bw_u_aF']")
+flags.DEFINE_bool("QuestionSideVis", True, "Is this Question side visualization or Context side? "
+                                           "Currently just used in POS tagger ('getPOS_fromBatch' in 'TPR_Visualization.py')[True]")
 flags.DEFINE_bool("Just_Answer_vis", True,
                   "Just visualize the answer part of passage determined by start and end words."
                   "If False, will visualize just first 15 words of passage. [True]")
 flags.DEFINE_bool("write2csv", False, "Write aF and aR per word in the test set to a csv file. [False]")
+flags.DEFINE_bool("POStagger", False, "Write aF and aR per word + their POS tags from "
+                                      "Stanford parser in the test set to a csv file. [False]")
+flags.DEFINE_string("stanford_jar",
+                    "/home/hpalangi/QA/TPR_Stuff/Codes/TPR_ver1.0/stanford-postagger-2016-10-31/stanford-postagger.jar",
+                    "For POS tagger.")
+flags.DEFINE_string("stanford_model",
+                    "/home/hpalangi/QA/TPR_Stuff/Codes/TPR_ver1.0/stanford-postagger-2016-10-31/models/english-bidirectional-distsim.tagger",
+                    "For POS tagger.")
 
 def main(_):
     config = flags.FLAGS

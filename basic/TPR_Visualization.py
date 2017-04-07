@@ -6,6 +6,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 import csv
+from nltk.tag import StanfordPOSTagger
 
 def norm_vis(T, which_words, data_type, summaries):
     """
@@ -200,3 +201,32 @@ def write2csv(data_set, idxs, tensor_dict, config, tensor2vis):
         for row in out:
             writer.writerow(row)
     fl.close()
+
+def write2csv_withPOS(data_set, idxs, tensor_dict, config, tensor2vis, posBatch):
+    fl = open(config.TPRvis_dir + "/" + tensor2vis + "_nRoles_" + str(config.nRoles) + "_test_set.csv", "a")
+    nQuestions = len(data_set.data["q"])
+    for which_q in range(nQuestions):
+        if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side
+            question = data_set.data["q"][which_q]
+            q_len = len(question)
+            T = tensor_dict[tensor2vis][which_q][:q_len]
+        out = [[]]*q_len
+        pos = posBatch[which_q]
+        for i in range(q_len):
+            out[i] = [idxs[which_q]] + [question[i]] + [pos[i][1]] + T[i].tolist()
+        writer = csv.writer(fl)
+        for row in out:
+            writer.writerow(row)
+    fl.close()
+
+def getPOS_fromBatch(data_set, config):
+    nQuestions = len(data_set.data["q"])
+    out = [[]] * nQuestions
+    pos_tagger = StanfordPOSTagger(config.stanford_model, config.stanford_jar, encoding='utf8')
+    for which_q in range(nQuestions):
+        if config.QuestionSideVis: # Question side
+            question = data_set.data["q"][which_q]
+        pos = pos_tagger.tag(question)
+        out[which_q] = pos
+    return out
+
