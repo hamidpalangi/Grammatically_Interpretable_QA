@@ -185,25 +185,51 @@ class Model(object):
                 self.tensor_dict['u'] = u
                 self.tensor_dict['h'] = h
         elif config.LSTMandTPR:
-            with tf.variable_scope("prepro"):
+            with tf.variable_scope("prepro"): # LSTM Network
                 (fw_u, bw_u), ((_, fw_u_f), (_, bw_u_f)) = bidirectional_dynamic_rnn(d_cell, d_cell, qq, q_len, dtype='float', scope='u1')  # [N, J, d], [N, d]
                 if config.share_lstm_weights:
                     tf.get_variable_scope().reuse_variables()
                     (fw_h, bw_h), _ = bidirectional_dynamic_rnn(cell, cell, xx, x_len, dtype='float', scope='u1')  # [N, M, JX, 2d]
                 else:
                     (fw_h, bw_h), _ = bidirectional_dynamic_rnn(cell, cell, xx, x_len, dtype='float', scope='h1')  # [N, M, JX, 2d]
-            # TPR model
-            tpr_cell = TPRCell(config.nSymbols, config.nRoles, config.dSymbols, config.dRoles)
-            with tf.variable_scope("tpr"):
-                (fw_uTPR, bw_uTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, qq, q_len, dtype='float', scope='u1TPR')  # [N, J, d], [N, d]
+                # TPR model
+                dimT = config.dSymbols * config.dRoles
+                if config.TPRregularizer1:
+                    tpr_cell = TPRCellReg(config.nSymbols, config.nRoles, config.dSymbols, config.dRoles)
+                else:
+                    tpr_cell = TPRCell(config.nSymbols, config.nRoles, config.dSymbols, config.dRoles)
+            with tf.variable_scope("tpr"): # TPR Network
+                if config.TPRregularizer1:
+                    ((fw_u_aF, fw_u_aR, fw_uTPR), (bw_u_aF, bw_u_aR, bw_uTPR)), _ = \
+                        bidirectional_dynamic_rnn_4reg(tpr_cell, tpr_cell, qq, config.nSymbols, config.nRoles, dimT,
+                                                       q_len, dtype='float', scope='u1TPR')  # [N, J, d], [N, d]
+                else:
+                    (fw_uTPR, bw_uTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, qq, q_len, dtype='float',
+                                                                      scope='u1TPR')  # [N, J, d], [N, d]
                 u = tf.concat(2, [fw_u, bw_u, fw_uTPR, bw_uTPR])
                 if config.share_tpr_weights:
                     tf.get_variable_scope().reuse_variables()
-                    (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='u1TPR')  # [N, M, JX, 2d]
-                    h = tf.concat(3, [fw_h, bw_h, fw_hTPR, bw_hTPR])  # [N, M, JX, 2d]
+                    if config.TPRregularizer1:
+                        ((fw_h_aF, fw_h_aR, fw_hTPR), (bw_h_aF, bw_h_aR, bw_hTPR)), _ = \
+                            bidirectional_dynamic_rnn_4reg(tpr_cell, tpr_cell, xx, config.nSymbols, config.nRoles,
+                                                           dimT, x_len, dtype='float',
+                                                           scope='u1TPR')  # [N, M, JX, 2d]
+                    else:
+                        (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len,
+                                                                          dtype='float',
+                                                                          scope='u1TPR')  # [N, M, JX, 2d]
+                    h = tf.concat(3, [fw_h, bw_h, fw_hTPR, bw_hTPR]) # [N, M, JX, 4d]
                 else:
-                    (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len, dtype='float', scope='h1TPR')  # [N, M, JX, 2d]
-                    h = tf.concat(3, [fw_h, bw_h, fw_hTPR, bw_hTPR])  # [N, M, JX, 2d]
+                    if config.TPRregularizer1:
+                        ((fw_h_aF, fw_h_aR, fw_hTPR), (bw_h_aF, bw_h_aR, bw_hTPR)), _ = \
+                            bidirectional_dynamic_rnn_4reg(tpr_cell, tpr_cell, xx, config.nSymbols, config.nRoles,
+                                                           dimT, x_len, dtype='float',
+                                                           scope='h1TPR')  # [N, M, JX, 2d]
+                    else:
+                        (fw_hTPR, bw_hTPR), _ = bidirectional_dynamic_rnn(tpr_cell, tpr_cell, xx, x_len,
+                                                                          dtype='float',
+                                                                          scope='h1TPR')  # [N, M, JX, 2d]
+                    h = tf.concat(3, [fw_h, bw_h, fw_hTPR, bw_hTPR])  # [N, M, JX, 4d]
                 self.tensor_dict['u'] = u
                 self.tensor_dict['h'] = h
         elif config.TPRLSTMCell:
