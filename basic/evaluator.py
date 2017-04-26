@@ -307,8 +307,8 @@ class F1Evaluator(LabeledEvaluator):
             else:
                 for tensor2vis in self.config.which_tensors2vis:
                     write2csv(data_set, idxs, tensor_dict, self.config, tensor2vis)
-        if self.config.mode == "test" and self.config.F_vis:
-            cluster(self.config.nClusters_F, tensor_dict["fw_F"])
+        if self.config.mode == "test" and self.config.F_vis and not self.config.clustered_F:
+            self.config.clustered_F = cluster(self.config.nClusters_F, tensor_dict["fw_F"], self.config)
 
         e = F1Evaluation(data_set.data_type, int(global_step), idxs, yp.tolist(), yp2.tolist(), y,
                          correct, float(loss), f1s, id2answer_dict, tensor_dict=tensor_dict)

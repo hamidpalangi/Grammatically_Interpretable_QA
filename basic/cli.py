@@ -141,6 +141,8 @@ flags.DEFINE_bool("F_vis", False, "visualize fillers matrix F. [False]")
 flags.DEFINE_bool("R_vis", False, "visualize roles matrix R. [False]")
 flags.DEFINE_integer("nClusters_F", 20, "# of clusters for clustering of trained F in TPR for visualization purposes [20]")
 flags.DEFINE_integer("nClusters_R", 5, "# of clusters for clustering of trained R in TPR for visualization purposes [5]")
+flags.DEFINE_bool("clustered_F", False, "used internally. [False]")
+flags.DEFINE_bool("clustered_R", False, "used internally. [False]")
 
 def main(_):
     config = flags.FLAGS

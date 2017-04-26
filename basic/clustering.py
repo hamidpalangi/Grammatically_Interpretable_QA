@@ -43,17 +43,19 @@ def computeHopkins(fea):
     H = sum(ujd) / (sum(ujd) + sum(wjd))
     return H
 
-def pre_visualize(fea, fea_new):
+def pre_visualize(fea, fea_new, config):
     Hidx = computeHopkins(fea)
-    print("Hopkins statistic: %.4f" % Hidx)
     fea_vis = pd.DataFrame(fea_new, columns=["PC1", "PC2"])
     fea_vis["clusterIDX"] = 0
     g = ggplot(fea_vis, aes(x="PC1", y="PC2", color="factor(clusterIDX)")) + \
         geom_point(size=50) + \
         ggtitle("Data points, Hopkins statistic = %.4f" % Hidx)
-    print(g)
+    if config.F_vis:
+        g.save(filename=config.TPRvis_dir + "/clustering_preVis_F.png")
+    elif config.R_vis:
+        g.save(filename=config.TPRvis_dir + "/clustering_preVis_R.png")
 
-def post_visualize(fea, fea_new, f, c_new, centers):
+def post_visualize(fea, fea_new, f, c_new, centers, config):
     num = len(centers)
     # Silhouette score:
     # best value=1, worst value=-1. If close to zero, means overlapping clusters.
@@ -64,14 +66,16 @@ def post_visualize(fea, fea_new, f, c_new, centers):
     g = ggplot(fea_vis, aes(x="PC1", y="PC2", color="factor(clusterIDX)")) + \
         geom_point(size=50) + \
         ggtitle("Clustered data points, Silhouette score = %.4f" % ss)
-    print(g)
+    if config.F_vis:
+        g.save(filename=config.TPRvis_dir + "/clustering_postVis_F.png")
+    elif config.R_vis:
+        g.save(filename=config.TPRvis_dir + "/clustering_postVis_R.png")
     # Number of data points in each cluster
     for i in range(num):
         indices = getDatapoints(estimator=f, label=i)
         print("Number of data points in cluster %d is %d, center = " % (i, len(indices)), centers[i])
-    print("PCA cluster centers:\n", c_new)
 
-def do_cluster(num, fea):
+def do_cluster(num, fea, config):
     """
     num: list of number of clusters.
     fea: feature vectors to cluster [nTr, nFea]
@@ -82,7 +86,7 @@ def do_cluster(num, fea):
     pca = PCA(n_components=2)
     pca.fit(fea)
     fea_new = pca.transform(fea)
-    pre_visualize(fea, fea_new)
+    pre_visualize(fea, fea_new, config)
 
     # %%%%%% select number of clusters.
     n = len(num)
@@ -100,5 +104,5 @@ def do_cluster(num, fea):
     c_new = pca.transform(centers)
     # %%%%%%
 
-    post_visualize(fea, fea_new, f, c_new, centers)
-    print("Done!")
+    post_visualize(fea, fea_new, f, c_new, centers, config)
+    print("Clustering Done!")

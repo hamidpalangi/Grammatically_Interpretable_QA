@@ -229,5 +229,6 @@ def getPOS_fromBatch(data_set, config):
         out[which_q] = pos
     return out
 
-def cluster(n, X):
-    do_cluster(n, X)
+def cluster(num, X, config):
+    do_cluster(num, X, config)
+    return True
