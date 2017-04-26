@@ -80,7 +80,10 @@ def do_cluster(num, fea, config):
          where nTr is the # of feature vectors and
          nFea is the # of features in each feature vector.
     """
-    fea = scale(fea) # subtract mean, divide by std.
+    # subtract mean, divide by std.
+    mu = fea.mean()
+    sigma = fea.std()
+    fea = ( fea - mu ) / sigma
     pca = PCA(n_components=2)
     pca.fit(fea)
     fea_new = pca.transform(fea)
