@@ -106,4 +106,4 @@ def do_cluster(num, fea, config):
     # %%%%%%
     post_visualize(fea, fea_new, f, c_new, centers, config)
     print("Clustering Done!")
-    return centers
+    return centers * sigma + mu
