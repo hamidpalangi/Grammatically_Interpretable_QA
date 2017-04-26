@@ -139,8 +139,12 @@ flags.DEFINE_string("stanford_model",
                     "For POS tagger.")
 flags.DEFINE_bool("F_vis", False, "visualize fillers matrix F. [False]")
 flags.DEFINE_bool("R_vis", False, "visualize roles matrix R. [False]")
-flags.DEFINE_integer("nClusters_F", 20, "# of clusters for clustering of trained F in TPR for visualization purposes [20]")
-flags.DEFINE_integer("nClusters_R", 5, "# of clusters for clustering of trained R in TPR for visualization purposes [5]")
+flags.DEFINE_string("nClusters_F", "20", "# of clusters for clustering of trained F in TPR for visualization purposes. "
+                                          "Can be a list of number of candidate clusters. Clustering is performed for each "
+                                          "one and the best one is selected based on Silhouette score [20]")
+flags.DEFINE_string("nClusters_R", "5", "# of clusters for clustering of trained R in TPR for visualization purposes. "
+                                         "Can be a list of number of candidate clusters. Clustering is performed for each "
+                                         "one and the best one is selected based on Silhouette score [5]")
 flags.DEFINE_bool("clustered_F", False, "used internally. [False]")
 flags.DEFINE_bool("clustered_R", False, "used internally. [False]")
 
@@ -150,6 +154,8 @@ def main(_):
     config.which_tensors2vis = [tensor for tensor in config.which_tensors2vis.split(",")]
     if config.JustLastIterVis:
         config.log_period = config.num_steps
+    config.nClusters_F = [int(i) for i in config.nClusters_F.split(",")]
+    config.nClusters_R = [int(i) for i in config.nClusters_R.split(",")]
     config.out_dir = os.path.join(config.out_base_dir, config.model_name, str(config.run_id).zfill(2))
 
     m(config)

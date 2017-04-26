@@ -45,6 +45,7 @@ def computeHopkins(fea):
 
 def pre_visualize(fea, fea_new, config):
     Hidx = computeHopkins(fea)
+    print("Hopkins statistic for clustering = %.4f" % Hidx)
     fea_vis = pd.DataFrame(fea_new, columns=["PC1", "PC2"])
     fea_vis["clusterIDX"] = 0
     g = ggplot(fea_vis, aes(x="PC1", y="PC2", color="factor(clusterIDX)")) + \
@@ -73,7 +74,8 @@ def post_visualize(fea, fea_new, f, c_new, centers, config):
     # Number of data points in each cluster
     for i in range(num):
         indices = getDatapoints(estimator=f, label=i)
-        print("Number of data points in cluster %d is %d, center = " % (i, len(indices)), centers[i])
+        print("Number of data points in cluster %d is %d" % (i, len(indices)))
+        # centers[i]
 
 def do_cluster(num, fea, config):
     """
@@ -96,7 +98,8 @@ def do_cluster(num, fea, config):
         f.fit(fea)
         ss[i] = silhouette_score(fea, f.labels_)
         print("with %d clusters Silhouette score is: %.4f" % (num[i], ss[i]))
-    idx, val = max(enumerate(ss))
+    val = max(ss)
+    idx = ss.index(val)
     print("Performing clustering with %d clusters" % num[idx])
     f = KMeans(init='k-means++', n_clusters=num[idx], n_init=10)
     f.fit(fea)
