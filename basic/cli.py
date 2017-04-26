@@ -137,6 +137,8 @@ flags.DEFINE_string("stanford_jar",
 flags.DEFINE_string("stanford_model",
                     "/home/hpalangi/QA/TPR_Stuff/Codes/TPR_ver1.0/stanford-postagger-2016-10-31/models/english-bidirectional-distsim.tagger",
                     "For POS tagger.")
+flags.DEFINE_bool("F_vis", False, "visualize fillers matrix F. [False]")
+flags.DEFINE_bool("R_vis", False, "visualize roles matrix R. [False]")
 
 def main(_):
     config = flags.FLAGS

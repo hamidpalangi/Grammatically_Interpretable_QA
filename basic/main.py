@@ -146,6 +146,27 @@ def _test(config):
 
     pprint(config.__flags, indent=2)
     models = get_multi_gpu_models(config)
+
+    if config.TPRvis:
+        if config.F_vis:
+            # finding the tensor names for forward/backward learned F matrices and adding them to tensor_dict.
+            F_vars = [v for v in tf.all_variables()
+                      if "FillerRoles/F" in v.name and "ExponentialMovingAverage" in v.name]
+            for F_var in F_vars:
+                if "FW/" in F_var.name:
+                    models[0].tensor_dict["fw_F"] = F_var
+                if "BW/" in F_var.name:
+                    models[0].tensor_dict["bw_F"] = F_var
+        if config.R_vis:
+            # finding the tensor names for forward/backward learned R matrices and adding them to tensor_dict.
+            R_vars = [v for v in tf.all_variables()
+                      if "FillerRoles/R" in v.name and "ExponentialMovingAverage" in v.name]
+            for R_var in R_vars:
+                if "FW/" in R_var.name:
+                    models[0].tensor_dict["fw_R"] = R_var
+                if "BW/" in R_var.name:
+                    models[0].tensor_dict["bw_R"] = R_var
+
     model = models[0]
     evaluator = MultiGPUF1Evaluator(config, models, tensor_dict=models[0].tensor_dict if config.vis else None)
     graph_handler = GraphHandler(config, model)
