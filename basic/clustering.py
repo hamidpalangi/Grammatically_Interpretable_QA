@@ -72,7 +72,6 @@ def post_visualize(fea, fea_new, f, c_new, centers, config):
     for i in range(num):
         indices = getDatapoints(estimator=f, label=i)
         print("Number of data points in cluster %d is %d" % (i, len(indices)))
-        # centers[i]
 
 def do_cluster(num, fea, config):
     """
@@ -104,3 +103,4 @@ def do_cluster(num, fea, config):
     # %%%%%%
     post_visualize(fea, fea_new, f, c_new, centers, config)
     print("Clustering Done!")
+    return centers

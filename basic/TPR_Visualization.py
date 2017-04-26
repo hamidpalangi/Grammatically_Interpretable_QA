@@ -230,5 +230,5 @@ def getPOS_fromBatch(data_set, config):
     return out
 
 def cluster(num, X, config):
-    do_cluster(num, X, config)
-    return True
+    centers = do_cluster(num, X, config)
+    return True, centers
