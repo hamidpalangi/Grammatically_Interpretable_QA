@@ -139,6 +139,8 @@ flags.DEFINE_string("stanford_model",
                     "For POS tagger.")
 flags.DEFINE_bool("F_vis", False, "visualize fillers matrix F. [False]")
 flags.DEFINE_bool("R_vis", False, "visualize roles matrix R. [False]")
+flags.DEFINE_integer("nClusters_F", 20, "# of clusters for clustering of trained F in TPR for visualization purposes [20]")
+flags.DEFINE_integer("nClusters_R", 5, "# of clusters for clustering of trained R in TPR for visualization purposes [5]")
 
 def main(_):
     config = flags.FLAGS

@@ -1,12 +1,11 @@
 import tensorflow as tf
 import numpy as np
-
+import csv
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-
-import csv
 from nltk.tag import StanfordPOSTagger
+from basic.clustering import do_cluster
 
 def norm_vis(T, which_words, data_type, summaries):
     """
@@ -230,3 +229,5 @@ def getPOS_fromBatch(data_set, config):
         out[which_q] = pos
     return out
 
+def cluster(n, X):
+    do_cluster(n, X)
