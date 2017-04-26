@@ -86,7 +86,6 @@ def do_cluster(num, fea, config):
     pca.fit(fea)
     fea_new = pca.transform(fea)
     pre_visualize(fea, fea_new, config)
-
     # %%%%%% select number of clusters.
     n = len(num)
     ss = [0.0]*n
@@ -103,6 +102,5 @@ def do_cluster(num, fea, config):
     centers = f.cluster_centers_
     c_new = pca.transform(centers)
     # %%%%%%
-
     post_visualize(fea, fea_new, f, c_new, centers, config)
     print("Clustering Done!")
