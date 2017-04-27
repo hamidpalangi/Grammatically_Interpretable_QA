@@ -5,6 +5,7 @@ from sklearn.neighbors import NearestNeighbors
 from pylab import *
 from random import sample
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import scale
 from ggplot import *
 np.random.seed(123)
 
@@ -79,10 +80,7 @@ def do_cluster(num, fea, config):
          where nTr is the # of feature vectors and
          nFea is the # of features in each feature vector.
     """
-    # subtract mean, divide by std.
-    mu = fea.mean()
-    sigma = fea.std()
-    fea = ( fea - mu ) / sigma
+    fea = scale(fea) # subtract mean, divide by std.
     pca = PCA(n_components=2)
     pca.fit(fea)
     fea_new = pca.transform(fea)
@@ -105,4 +103,3 @@ def do_cluster(num, fea, config):
     # %%%%%%
     post_visualize(fea, fea_new, f, c_new, centers, config)
     print("Clustering Done!")
-    return centers * sigma + mu
