@@ -148,7 +148,7 @@ def _test(config):
     models = get_multi_gpu_models(config)
 
     if config.TPRvis:
-        if config.F_vis:
+        if config.F_vis or config.Fa_F_vis:
             # finding the tensor names for forward/backward learned F matrices and adding them to tensor_dict.
             F_vars = [v for v in tf.all_variables()
                       if "FillerRoles/F" in v.name and "ExponentialMovingAverage" in v.name]

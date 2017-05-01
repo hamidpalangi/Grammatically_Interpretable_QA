@@ -232,3 +232,19 @@ def getPOS_fromBatch(data_set, config):
 def cluster(num, X, config):
     do_cluster(num, X, config)
     return True
+
+def do_Fa_F_vis(data_set, idxs, tensor_dict, config, tensor2vis):
+    fl = open(config.TPRvis_dir + "/" + tensor2vis + "Fa_F_vis_test_set.csv", "a")
+    nQuestions = len(data_set.data["q"])
+    for which_q in range(nQuestions):
+        if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side
+            question = data_set.data["q"][which_q]
+            q_len = len(question)
+            T = tensor_dict[tensor2vis][which_q][:q_len]
+        out = [[]]*q_len
+        for i in range(q_len):
+            out[i] = [idxs[which_q]] + [question[i]] + T[i].tolist()
+        writer = csv.writer(fl)
+        for row in out:
+            writer.writerow(row)
+    fl.close()
