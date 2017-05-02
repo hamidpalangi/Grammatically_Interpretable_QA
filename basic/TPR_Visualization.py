@@ -6,6 +6,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from nltk.tag import StanfordPOSTagger
 from basic.clustering import do_cluster
+from sklearn.metrics.pairwise import cosine_similarity
 
 def norm_vis(T, which_words, data_type, summaries):
     """
@@ -233,17 +234,20 @@ def cluster(num, X, config):
     do_cluster(num, X, config)
     return True
 
-def do_Fa_F_vis(data_set, idxs, tensor_dict, config, tensor2vis):
-    fl = open(config.TPRvis_dir + "/" + tensor2vis + "Fa_F_vis_test_set.csv", "a")
+def do_Fa_F_vis(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
+    F = tensor_dict[F_name]
+    fl = open(config.TPRvis_dir + "/" + tensor2vis + "_vis_Fa_F_test_set.csv", "a")
     nQuestions = len(data_set.data["q"])
     for which_q in range(nQuestions):
-        if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side
+        if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side, context side is to do.
             question = data_set.data["q"][which_q]
             q_len = len(question)
             T = tensor_dict[tensor2vis][which_q][:q_len]
         out = [[]]*q_len
         for i in range(q_len):
-            out[i] = [idxs[which_q]] + [question[i]] + T[i].tolist()
+            F_embed_vec = T[i].dot(F)
+            similarities = cosine_similarity( F , F_embed_vec.reshape(1,-1) )
+            out[i] = [idxs[which_q]] + [question[i]] + similarities.tolist()
         writer = csv.writer(fl)
         for row in out:
             writer.writerow(row)
