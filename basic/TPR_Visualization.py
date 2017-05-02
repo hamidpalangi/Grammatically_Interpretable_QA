@@ -235,6 +235,20 @@ def cluster(num, X, config):
     return True
 
 def do_Fa_F_vis(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
+    """
+    This function finds the cosine similarity between F * a_F(t) for each word and each filler embedding vector (each
+    column of F) where t is the word number in the sentence.
+    :param data_set: contains the input sentence.
+    :param idxs: index of the sentence in the dataset.
+    :param tensor_dict: contains the tensors we need, e.g., learned F matrix and a_F(t) vectors.
+    :param config: includes config & settings
+    :param tensor2vis: the name of tensor we want to visualize.
+    :param F_name: the of tensor that contains the trained F matrix.
+    :return:
+            Prints the cosine similarity scores in an excel file where each row shows one word and each column is a filler.
+            This helps to explore which words are assigned to an specific filler.
+
+    """
     F = tensor_dict[F_name]
     fl = open(config.TPRvis_dir + "/" + tensor2vis + "_vis_Fa_F_test_set.csv", "a")
     nQuestions = len(data_set.data["q"])
@@ -247,6 +261,8 @@ def do_Fa_F_vis(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
         for i in range(q_len):
             F_embed_vec = T[i].dot(F)
             similarities = cosine_similarity( F , F_embed_vec.reshape(1,-1) )
+            similarities = similarities.squeeze() # remove the unnecessary extra dimension from sklearn.
+            similarities = np.round(similarities, decimals=4)
             out[i] = [idxs[which_q]] + [question[i]] + similarities.tolist()
         writer = csv.writer(fl)
         for row in out:
