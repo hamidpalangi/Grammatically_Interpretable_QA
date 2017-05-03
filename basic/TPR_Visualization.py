@@ -268,3 +268,40 @@ def do_Fa_F_vis(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
         for row in out:
             writer.writerow(row)
     fl.close()
+
+def do_Fa_F_vis_max(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
+    """
+    This function finds the word-filler assignment based on maximum cosine similarity. Then prints the corresponding words under each filler.
+    :param data_set: contains the input sentence.
+    :param idxs: index of the sentence in the dataset.
+    :param tensor_dict: contains the tensors we need, e.g., learned F matrix and a_F(t) vectors.
+    :param config: includes config & settings
+    :param tensor2vis: the name of tensor we want to visualize.
+    :param F_name: the of tensor that contains the trained F matrix.
+    :return:
+            Prints the cosine similarity scores in an excel file where each row shows one word and each column is a filler.
+            This helps to explore which words are assigned to an specific filler.
+
+    """
+    F = tensor_dict[F_name]
+    fl = open(config.TPRvis_dir + "/" + tensor2vis + "_MAX_vis_Fa_F_test_set.csv", "a")
+    nQuestions = len(data_set.data["q"])
+    for which_q in range(nQuestions):
+        if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side, context side is to do.
+            question = data_set.data["q"][which_q]
+            q_len = len(question)
+            T = tensor_dict[tensor2vis][which_q][:q_len]
+        out = [[]]*q_len
+        for i in range(q_len):
+            F_embed_vec = T[i].dot(F)
+            similarities = cosine_similarity( F , F_embed_vec.reshape(1,-1) )
+            similarities = similarities.squeeze() # remove the unnecessary extra dimension from sklearn.
+            max_idx = np.argmax(similarities) # index of the filler with maximum similarity.
+            max_val = np.round(max(similarities), decimals=4)
+            fillers = [""]*config.nSymbols
+            fillers[max_idx] = question[i] + " , " + str(max_val)
+            out[i] = [idxs[which_q]] + fillers
+        writer = csv.writer(fl)
+        for row in out:
+            writer.writerow(row)
+    fl.close()
