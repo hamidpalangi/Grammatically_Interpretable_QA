@@ -299,8 +299,8 @@ def do_Fa_F_vis_max(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
             max_idx = np.argmax(similarities) # index of the filler with maximum similarity.
             max_val = np.round(max(similarities), decimals=4)
             fillers = [""]*config.nSymbols
-            fillers[max_idx] = question[i] + " , " + str(max_val)
-            out[i] = [idxs[which_q]] + fillers
+            fillers[max_idx] = question[i] + "\n" + str(max_val) + "\n" + str(idxs[which_q])
+            out[i] = fillers
         writer = csv.writer(fl)
         for row in out:
             writer.writerow(row)
