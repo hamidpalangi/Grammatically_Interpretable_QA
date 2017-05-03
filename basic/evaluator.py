@@ -296,9 +296,11 @@ class F1Evaluator(LabeledEvaluator):
         f1s = [self.__class__.span_f1(yi, span) for yi, span in zip(y, spans)]
         tensor_dict = dict(zip(self.tensor_dict.keys(), vals))
         # Visualization
-        if self.config.mode == "test" and self.config.TPRvis and (not self.config.write2csv):
-            for tensor2vis in self.config.which_tensors2vis:
-                sentence2role_filler_vis(data_set, idxs, tensor_dict, self.config, tensor2vis, spans)
+        if self.config.mode == "test" and self.config.TPRvis:
+            if not self.config.write2csv and not self.config.Fa_F_vis:
+                # Do not want to create / save unnecessary images on the disk while writing into excel files.
+                for tensor2vis in self.config.which_tensors2vis:
+                    sentence2role_filler_vis(data_set, idxs, tensor_dict, self.config, tensor2vis, spans)
         if self.config.mode == "test" and self.config.write2csv:
             if self.config.POStagger:
                 posBatch = getPOS_fromBatch(data_set, self.config)
