@@ -190,6 +190,8 @@ def _test(config):
 
     if config.Fa_F_vis:
         evaluator.B = evaluator.B / config.nWordsTest
+        file_name = config.TPRvis_dir + "/" + "B_averaged_whole_test_set.csv"
+        np.savetxt(file_name, evaluator.B, delimiter=",")
 
     print(e)
     if config.dump_answer:
