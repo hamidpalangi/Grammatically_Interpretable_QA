@@ -333,7 +333,7 @@ def do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, config, tensor2vis, F_name)
             similarities = similarities.squeeze() # remove the unnecessary extra dimension from sklearn.
             max_idx = np.argmax(similarities) # index of the filler with maximum similarity.
             max_val = np.round(max(similarities), decimals=4)
-            out = [question[i] + "|" + str(max_val) + "|" + str(idxs[which_q])]
+            out = [question[i]] + [max_val] + [i] + [idxs[which_q]]
             fl = open(config.TPRvis_dir + "/" + tensor2vis + "_MAX_vis_Fa_F_test_set_" + "Filler_" + str(max_idx) + ".csv", "a")
             writer = csv.writer(fl)
             writer.writerow(out)
