@@ -188,6 +188,9 @@ def _test(config):
             path = os.path.join(eval_subdir, str(ei.idxs[0]).zfill(8))
             graph_handler.dump_eval(ei, path=path)
 
+    if config.Fa_F_vis:
+        evaluator.B = evaluator.B / config.nWordsTest
+
     print(e)
     if config.dump_answer:
         print("dumping answer ...")

@@ -9,7 +9,7 @@ from squad.utils import get_phrase, get_best_span
 
 from basic.TPR_Visualization import sentence2role_filler_vis, write2csv, \
     write2csv_withPOS, getPOS_fromBatch, cluster, do_Fa_F_vis, \
-    do_Fa_F_vis_max, do_Fa_F_vis_max_TMP
+    do_Fa_F_vis_max, do_Fa_F_vis_max_TMP, B_avg
 
 class Evaluation(object):
     def __init__(self, data_type, global_step, idxs, yp, tensor_dict=None):
@@ -242,6 +242,8 @@ class F1Evaluator(LabeledEvaluator):
         self.yp2 = model.yp2
         self.loss = model.loss
         self.fig = None
+        if config.Fa_F_vis:
+            self.B = np.zeros([config.nSymbols, config.nRoles]) # Binding matrix averaged over the whole dataset.
 
     def get_evaluation(self, sess, batch):
         idxs, data_set = self._split_batch(batch)
@@ -314,6 +316,7 @@ class F1Evaluator(LabeledEvaluator):
             self.config.clustered_F = cluster(self.config.nClusters_F, tensor_dict["fw_F"], self.config)
         if self.config.mode == "test" and self.config.TPRvis and self.config.Fa_F_vis:
             for tensor2vis, F_name in [("fw_u_aF", "fw_F")]: #, ("bw_u_aF", "bw_F")]:
+                self.B = B_avg(data_set, tensor_dict, ["fw_u_aF", "fw_u_aR"], self.B)
                 do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
                 # do_Fa_F_vis_max(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
                 # do_Fa_F_vis(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)

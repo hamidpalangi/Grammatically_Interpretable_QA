@@ -150,6 +150,7 @@ flags.DEFINE_bool("clustered_R", False, "used internally. [False]")
 flags.DEFINE_bool("Fa_F_vis", False, "Finds cosine similarity between each filler (each column of F) and"
                                      "F*a_F for each word. For now writes all of them in an excel file where "
                                      "each row represents a word and each column represents a filler. [False]")
+flags.DEFINE_integer("nWordsTest", 120950, "Total number of words in the test set [120950]")
 
 def main(_):
     config = flags.FLAGS

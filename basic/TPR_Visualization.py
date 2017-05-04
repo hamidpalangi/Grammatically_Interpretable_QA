@@ -308,7 +308,8 @@ def do_Fa_F_vis_max(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
 
 def do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
     """
-    One excel file per filler.
+    One excel file per filler, i.e., all words assigned to that filler are in the excel file corresponding to it along
+    with the cosine similarity, the index of the word in the sentence, and, the index of the sentence in the whole dataset.
     This function finds the word-filler assignment based on maximum cosine similarity. Then prints the corresponding words under each filler.
     :param data_set: contains the input sentence.
     :param idxs: index of the sentence in the dataset.
@@ -339,3 +340,17 @@ def do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, config, tensor2vis, F_name)
             writer = csv.writer(fl)
             writer.writerow(out)
             fl.close()
+
+def B_avg(data_set, tensor_dict, tensor2vis, B):
+    aF_name, aR_name = tensor2vis
+    assert aF_name in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"] # Question side, context side is to do.
+    assert aR_name in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"] # Question side, context side is to do.
+    nQuestions = len(data_set.data["q"])
+    for which_q in range(nQuestions):
+        question = data_set.data["q"][which_q]
+        q_len = len(question)
+        aF = tensor_dict[aF_name][which_q][:q_len]
+        aR = tensor_dict[aR_name][which_q][:q_len]
+        for i in range(q_len):
+            B += np.expand_dims(aF[i], axis=1).dot(np.expand_dims(aR[i], axis=0))
+    return B
