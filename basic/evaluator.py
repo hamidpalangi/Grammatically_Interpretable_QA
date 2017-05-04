@@ -315,11 +315,11 @@ class F1Evaluator(LabeledEvaluator):
         if self.config.mode == "test" and self.config.TPRvis and self.config.F_vis and not self.config.clustered_F:
             self.config.clustered_F = cluster(self.config.nClusters_F, tensor_dict["fw_F"], self.config)
         if self.config.mode == "test" and self.config.TPRvis and self.config.Fa_F_vis:
+            self.B = B_avg(data_set, tensor_dict, ["fw_u_aF", "fw_u_aR"], self.B)
             for tensor2vis, F_name in [("fw_u_aF", "fw_F")]: #, ("bw_u_aF", "bw_F")]:
-                self.B = B_avg(data_set, tensor_dict, ["fw_u_aF", "fw_u_aR"], self.B)
-                # do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
-                # do_Fa_F_vis_max(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
-                # do_Fa_F_vis(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
+                do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
+            #     # do_Fa_F_vis_max(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
+            #     # do_Fa_F_vis(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
 
         e = F1Evaluation(data_set.data_type, int(global_step), idxs, yp.tolist(), yp2.tolist(), y,
                          correct, float(loss), f1s, id2answer_dict, tensor_dict=tensor_dict)
