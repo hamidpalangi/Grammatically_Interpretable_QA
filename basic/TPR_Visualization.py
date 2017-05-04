@@ -308,6 +308,7 @@ def do_Fa_F_vis_max(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
 
 def do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
     """
+    One excel file per filler.
     This function finds the word-filler assignment based on maximum cosine similarity. Then prints the corresponding words under each filler.
     :param data_set: contains the input sentence.
     :param idxs: index of the sentence in the dataset.
