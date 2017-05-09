@@ -311,7 +311,7 @@ def do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, config, tensor2vis, F_name)
     One excel file per filler, i.e., all words assigned to that filler are in the excel file corresponding to it along
     with the cosine similarity, the index of the word in the sentence, and, the index of the sentence in the whole dataset.
     This function finds the word-filler assignment based on maximum cosine similarity. Then prints the corresponding words under each filler.
-    :param data_set: contains the input sentence.
+    :param data_set: contains the input sentences.
     :param idxs: index of the sentence in the dataset.
     :param tensor_dict: contains the tensors we need, e.g., learned F matrix and a_F(t) vectors.
     :param config: includes config & settings
@@ -342,6 +342,18 @@ def do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, config, tensor2vis, F_name)
             fl.close()
 
 def B_avg(data_set, tensor_dict, tensor2vis, B):
+    """
+    This is basically B = sum( a_F(t) * (a_R(t))^T ) / number_of_tokens_in_test_set,
+    i.e., binding matrix averaged over whole test set.
+    :param data_set: contains the input sentences.
+    :param tensor_dict: contains the tensors we need, e.g., a_R(t) and a_F(t) vectors.
+    :param tensor2vis: the name of tensor(s) we want to visualize.
+    :param B: Binding matrix summed till this minibatch. It is summed over the whole test set
+    and then divided by total number of tokens in the test set.
+    :return:
+            B from this minibatch added to the B passed to this function. Later the averaged B is written
+            to a csv file in "main.py".
+    """
     aF_name, aR_name = tensor2vis
     assert aF_name in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"] # Question side, context side is to do.
     assert aR_name in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"] # Question side, context side is to do.

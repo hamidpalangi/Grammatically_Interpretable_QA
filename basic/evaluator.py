@@ -318,7 +318,7 @@ class F1Evaluator(LabeledEvaluator):
             self.B = B_avg(data_set, tensor_dict, ["fw_u_aF", "fw_u_aR"], self.B)
             for tensor2vis, F_name in [("fw_u_aF", "fw_F")]: #, ("bw_u_aF", "bw_F")]:
                 do_Fa_F_vis_FillerID_per_Word(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
-                # do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
+                do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
                 # do_Fa_F_vis_max(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
                 # do_Fa_F_vis(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
 

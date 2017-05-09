@@ -149,7 +149,14 @@ flags.DEFINE_bool("clustered_F", False, "used internally. [False]")
 flags.DEFINE_bool("clustered_R", False, "used internally. [False]")
 flags.DEFINE_bool("Fa_F_vis", False, "Finds cosine similarity between each filler (each column of F) and"
                                      "F*a_F for each word. For now writes all of them in an excel file where "
-                                     "each row represents a word and each column represents a filler. [False]")
+                                     "each row represents a word and each column represents a filler. "
+                                     "If set to True, 3 types of outputs are calculated and saved in folder "
+                                     "TPRvis in path '<path-to-codes>/out/basic/<run_id_number>/TPRvis':"
+                                     "1. Averaged bindning matrix B over the whole dataset."
+                                     "2. List of assigned words to each filler based on "
+                                     "cosine similarity and simple max rule. One csv file per filler. "
+                                     "3. One csv file including all tokens in the test set + the assigned "
+                                     "filler to that token. [False]")
 flags.DEFINE_integer("nWordsTest", 120950, "Total number of words in the test set [120950]")
 
 def main(_):
