@@ -237,80 +237,14 @@ def cluster(num, X, config):
 def do_Fa_F_vis(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
     """
     This function finds the cosine similarity between F * a_F(t) for each word and each filler embedding vector (each
-    column of F) where t is the word number in the sentence.
-    :param data_set: contains the input sentence.
-    :param idxs: index of the sentence in the dataset.
-    :param tensor_dict: contains the tensors we need, e.g., learned F matrix and a_F(t) vectors.
-    :param config: includes config & settings
-    :param tensor2vis: the name of tensor we want to visualize.
-    :param F_name: the of tensor that contains the trained F matrix.
-    :return:
-            Prints the cosine similarity scores in an excel file where each row shows one word and each column is a filler.
-            This helps to explore which words are assigned to an specific filler.
-
-    """
-    F = tensor_dict[F_name]
-    fl = open(config.TPRvis_dir + "/" + tensor2vis + "_vis_Fa_F_test_set.csv", "a")
-    nQuestions = len(data_set.data["q"])
-    for which_q in range(nQuestions):
-        if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side, context side is to do.
-            question = data_set.data["q"][which_q]
-            q_len = len(question)
-            T = tensor_dict[tensor2vis][which_q][:q_len]
-        out = [[]]*q_len
-        for i in range(q_len):
-            F_embed_vec = T[i].dot(F)
-            similarities = cosine_similarity( F , F_embed_vec.reshape(1,-1) )
-            similarities = similarities.squeeze() # remove the unnecessary extra dimension from sklearn.
-            similarities = np.round(similarities, decimals=4)
-            out[i] = [idxs[which_q]] + [question[i]] + similarities.tolist()
-        writer = csv.writer(fl)
-        for row in out:
-            writer.writerow(row)
-    fl.close()
-
-def do_Fa_F_vis_max(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
-    """
-    This function finds the word-filler assignment based on maximum cosine similarity. Then prints the corresponding words under each filler.
-    :param data_set: contains the input sentence.
-    :param idxs: index of the sentence in the dataset.
-    :param tensor_dict: contains the tensors we need, e.g., learned F matrix and a_F(t) vectors.
-    :param config: includes config & settings
-    :param tensor2vis: the name of tensor we want to visualize.
-    :param F_name: the of tensor that contains the trained F matrix.
-    :return:
-            Prints the cosine similarity scores in an excel file where each row shows one word and each column is a filler.
-            This helps to explore which words are assigned to an specific filler.
-
-    """
-    F = tensor_dict[F_name]
-    fl = open(config.TPRvis_dir + "/" + tensor2vis + "_MAX_vis_Fa_F_test_set.csv", "a")
-    nQuestions = len(data_set.data["q"])
-    for which_q in range(nQuestions):
-        if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side, context side is to do.
-            question = data_set.data["q"][which_q]
-            q_len = len(question)
-            T = tensor_dict[tensor2vis][which_q][:q_len]
-        out = [[]]*q_len
-        for i in range(q_len):
-            F_embed_vec = T[i].dot(F)
-            similarities = cosine_similarity( F , F_embed_vec.reshape(1,-1) )
-            similarities = similarities.squeeze() # remove the unnecessary extra dimension from sklearn.
-            max_idx = np.argmax(similarities) # index of the filler with maximum similarity.
-            max_val = np.round(max(similarities), decimals=4)
-            fillers = [""]*config.nSymbols
-            fillers[max_idx] = question[i] + "\n" + str(max_val) + "\n" + str(idxs[which_q])
-            out[i] = fillers
-        writer = csv.writer(fl)
-        for row in out:
-            writer.writerow(row)
-    fl.close()
-
-def do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
-    """
-    One excel file per filler, i.e., all words assigned to that filler are in the excel file corresponding to it along
+    column of F) where t is the word number in the sentence. It creates 3 outputs:
+    1. One excel file including the cosine similarity scores where each row shows one word and each column is a filler.
+    2. One excel file where assigned filler ID per word is written, i.e., one row per word + its assigned filler ID.
+    The word-filler assignment is based on the maximum cosine similarity.
+    3. Several excel files, where per filler one excel file is created.
+    All words assigned to that filler are in the excel file corresponding to it along
     with the cosine similarity, the index of the word in the sentence, and, the index of the sentence in the whole dataset.
-    This function finds the word-filler assignment based on maximum cosine similarity. Then prints the corresponding words under each filler.
+    The word-filler assignment is done based on maximum cosine similarity.
     :param data_set: contains the input sentences.
     :param idxs: index of the sentence in the dataset.
     :param tensor_dict: contains the tensors we need, e.g., learned F matrix and a_F(t) vectors.
@@ -318,10 +252,11 @@ def do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, config, tensor2vis, F_name)
     :param tensor2vis: the name of tensor we want to visualize.
     :param F_name: the of tensor that contains the trained F matrix.
     :return:
-            Prints the cosine similarity scores in an excel file where each row shows one word and each column is a filler.
-            This helps to explore which words are assigned to an specific filler.
-
     """
+    f2 = open(config.TPRvis_dir + "/" + tensor2vis + "_vis_Fa_F_test_set.csv", "a")
+    f3 = open(config.TPRvis_dir + "/" + tensor2vis + "_MAX_vis_Fa_F_fillerID_per_word_test_set.csv", "a")
+    writer2 = csv.writer(f2)
+    writer3 = csv.writer(f3)
     F = tensor_dict[F_name]
     nQuestions = len(data_set.data["q"])
     for which_q in range(nQuestions):
@@ -329,17 +264,28 @@ def do_Fa_F_vis_max_TMP(data_set, idxs, tensor_dict, config, tensor2vis, F_name)
             question = data_set.data["q"][which_q]
             q_len = len(question)
             T = tensor_dict[tensor2vis][which_q][:q_len]
+        out2 = [[]] * q_len
+        out3 = [[]] * q_len
         for i in range(q_len):
             F_embed_vec = T[i].dot(F)
             similarities = cosine_similarity( F , F_embed_vec.reshape(1,-1) )
             similarities = similarities.squeeze() # remove the unnecessary extra dimension from sklearn.
+            similarities = np.round(similarities, decimals=4)
             max_idx = np.argmax(similarities) # index of the filler with maximum similarity.
-            max_val = np.round(max(similarities), decimals=4)
+            max_val = max(similarities)
             out = [question[i]] + [max_val] + [i] + [idxs[which_q]]
+            out2[i] = [idxs[which_q]] + [question[i]] + similarities.tolist()
+            out3[i] = [idxs[which_q]] + [question[i]] + [max_idx] + [max_val]
             fl = open(config.TPRvis_dir + "/" + tensor2vis + "_MAX_vis_Fa_F_test_set_" + "Filler_" + str(max_idx) + ".csv", "a")
-            writer = csv.writer(fl)
-            writer.writerow(out)
+            writer1 = csv.writer(fl)
+            writer1.writerow(out)
             fl.close()
+        for row in out2:
+            writer2.writerow(row)
+        for row in out3:
+            writer3.writerow(row)
+    f2.close()
+    f3.close()
 
 def B_avg(data_set, tensor_dict, tensor2vis, B):
     """
@@ -366,39 +312,3 @@ def B_avg(data_set, tensor_dict, tensor2vis, B):
         for i in range(q_len):
             B += np.expand_dims(aF[i], axis=1).dot(np.expand_dims(aR[i], axis=0))
     return B
-
-def do_Fa_F_vis_FillerID_per_Word(data_set, idxs, tensor_dict, config, tensor2vis, F_name):
-    """
-    Write filler ID per word in one excel file, i.e., one row per word + its assigned filler ID.
-    This function finds the word-filler assignment based on maximum cosine similarity.
-    :param data_set: contains the input sentence.
-    :param idxs: index of the sentence in the dataset.
-    :param tensor_dict: contains the tensors we need, e.g., learned F matrix and a_F(t) vectors.
-    :param config: includes config & settings
-    :param tensor2vis: the name of tensor we want to visualize.
-    :param F_name: the of tensor that contains the trained F matrix.
-    :return:
-            Prints the cosine similarity scores in an excel file where each row shows one word and each column is a filler.
-            This helps to explore which words are assigned to an specific filler.
-
-    """
-    fl = open(config.TPRvis_dir + "/" + tensor2vis + "_MAX_vis_Fa_F_fillerID_per_word_test_set.csv", "a")
-    F = tensor_dict[F_name]
-    nQuestions = len(data_set.data["q"])
-    for which_q in range(nQuestions):
-        if tensor2vis in ["fw_u_aR", "bw_u_aR", "fw_u_aF", "bw_u_aF"]: # Question side, context side is to do.
-            question = data_set.data["q"][which_q]
-            q_len = len(question)
-            T = tensor_dict[tensor2vis][which_q][:q_len]
-        out = [[]] * q_len
-        for i in range(q_len):
-            F_embed_vec = T[i].dot(F)
-            similarities = cosine_similarity( F , F_embed_vec.reshape(1,-1) )
-            similarities = similarities.squeeze() # remove the unnecessary extra dimension from sklearn.
-            max_idx = np.argmax(similarities) # index of the filler with maximum similarity.
-            max_val = np.round(max(similarities), decimals=4)
-            out[i] = [idxs[which_q]] + [question[i]] + [max_idx] + [max_val]
-        writer = csv.writer(fl)
-        for row in out:
-            writer.writerow(row)
-    fl.close()
