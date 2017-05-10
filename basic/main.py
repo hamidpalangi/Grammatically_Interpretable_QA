@@ -151,7 +151,7 @@ def _test(config):
         if config.F_vis or config.Fa_F_vis:
             # finding the tensor names for forward/backward learned F matrices and adding them to tensor_dict.
             F_vars = [v for v in tf.all_variables()
-                      if "FillerRoles/F" in v.name and "ExponentialMovingAverage" in v.name]
+                      if "FillerRoles/F" in v.name and not "ExponentialMovingAverage" in v.name]
             for F_var in F_vars:
                 if "FW/" in F_var.name:
                     models[0].tensor_dict["fw_F"] = F_var
@@ -160,7 +160,7 @@ def _test(config):
         if config.R_vis:
             # finding the tensor names for forward/backward learned R matrices and adding them to tensor_dict.
             R_vars = [v for v in tf.all_variables()
-                      if "FillerRoles/R" in v.name and "ExponentialMovingAverage" in v.name]
+                      if "FillerRoles/R" in v.name and not "ExponentialMovingAverage" in v.name]
             for R_var in R_vars:
                 if "FW/" in R_var.name:
                     models[0].tensor_dict["fw_R"] = R_var
