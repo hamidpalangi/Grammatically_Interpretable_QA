@@ -313,7 +313,7 @@ def B_avg(data_set, tensor_dict, tensor2vis, B):
             B += np.expand_dims(aF[i], axis=1).dot(np.expand_dims(aR[i], axis=0))
     return B
 
-def EMperQ(data_set, idxs, config, correct, f1s):
+def EMperQ(data_set, idxs, config, correct, f1s, predicted_answers):
     out_file = open(config.TPRvis_dir + "/EMperQ_test_set.csv", "a")
     writer = csv.writer(out_file)
     nQuestions = len(data_set.data["q"])
@@ -321,6 +321,7 @@ def EMperQ(data_set, idxs, config, correct, f1s):
         question = data_set.data["q"][which_q]
         context = data_set.data["p"][which_q]
         answers = data_set.data["answerss"][which_q]
-        out = [idxs[which_q]] + [" ".join(question)] + [correct[which_q]] + [f1s[which_q]] + [context] + [answers]
+        out = [idxs[which_q]] + [" ".join(question)] + [correct[which_q]] + [f1s[which_q]] \
+              + [context] + [answers] + [predicted_answers[which_q]]
         writer.writerow(out)
     out_file.close()

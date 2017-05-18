@@ -290,8 +290,13 @@ class F1Evaluator(LabeledEvaluator):
                 return ""
             return get_phrase(context, xi, span)
 
-        id2answer_dict = {id_: _get2(context, xi, span)
-                          for id_, xi, span, context in zip(data_set.data['ids'], data_set.data['x'], spans, data_set.data['p'])}
+        if self.config.mode == "test" and self.config.EMperQ:
+            predicted_answers = [_get2(context, xi, span)
+                                 for xi, span, context in zip(data_set.data['x'], spans, data_set.data['p'])]
+            id2answer_dict = {id_: predicted_answer for id_, predicted_answer in zip(data_set.data['ids'], predicted_answers)}
+        else:
+            id2answer_dict = {id_: _get2(context, xi, span)
+                              for id_, xi, span, context in zip(data_set.data['ids'], data_set.data['x'], spans, data_set.data['p'])}
         id2score_dict = {id_: score for id_, score in zip(data_set.data['ids'], scores)}
         id2answer_dict['scores'] = id2score_dict
         correct = [self.__class__.compare2(yi, span) for yi, span in zip(y, spans)]
@@ -318,7 +323,7 @@ class F1Evaluator(LabeledEvaluator):
             for tensor2vis, F_name in [("fw_u_aF", "fw_F")]: #, ("bw_u_aF", "bw_F")]:
                 do_Fa_F_vis(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
         if self.config.mode == "test" and self.config.EMperQ:
-            EMperQ(data_set, idxs, self.config, correct, f1s)
+            EMperQ(data_set, idxs, self.config, correct, f1s, predicted_answers)
 
         e = F1Evaluation(data_set.data_type, int(global_step), idxs, yp.tolist(), yp2.tolist(), y,
                          correct, float(loss), f1s, id2answer_dict, tensor_dict=tensor_dict)
