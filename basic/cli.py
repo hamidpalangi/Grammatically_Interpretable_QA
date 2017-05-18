@@ -158,6 +158,8 @@ flags.DEFINE_bool("Fa_F_vis", False, "Finds cosine similarity between each fille
                                      "3. One csv file including all tokens in the test set + the assigned "
                                      "filler to that token.[False]")
 flags.DEFINE_integer("nWordsTest", 120950, "Total number of words in the test set [120950]")
+flags.DEFINE_bool("EMperQ", False, "Write EM, F1, paragraph, and 3 answers per query for the whole validation set as "
+                                   "different columns of an output excel file. [False]")
 
 def main(_):
     config = flags.FLAGS

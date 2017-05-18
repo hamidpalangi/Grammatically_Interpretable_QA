@@ -8,7 +8,7 @@ from my.utils import argmax
 from squad.utils import get_phrase, get_best_span
 
 from basic.TPR_Visualization import sentence2role_filler_vis, write2csv, \
-    write2csv_withPOS, getPOS_fromBatch, cluster, do_Fa_F_vis, B_avg
+    write2csv_withPOS, getPOS_fromBatch, cluster, do_Fa_F_vis, B_avg, EMperQ
 
 class Evaluation(object):
     def __init__(self, data_type, global_step, idxs, yp, tensor_dict=None):
@@ -317,6 +317,8 @@ class F1Evaluator(LabeledEvaluator):
             self.B = B_avg(data_set, tensor_dict, ["fw_u_aF", "fw_u_aR"], self.B)
             for tensor2vis, F_name in [("fw_u_aF", "fw_F")]: #, ("bw_u_aF", "bw_F")]:
                 do_Fa_F_vis(data_set, idxs, tensor_dict, self.config, tensor2vis, F_name)
+        if self.config.mode == "test" and self.config.EMperQ:
+            EMperQ(data_set, idxs, self.config, correct, f1s)
 
         e = F1Evaluation(data_set.data_type, int(global_step), idxs, yp.tolist(), yp2.tolist(), y,
                          correct, float(loss), f1s, id2answer_dict, tensor_dict=tensor_dict)
