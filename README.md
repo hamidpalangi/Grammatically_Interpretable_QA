@@ -11,7 +11,7 @@
 - The codes are written on the top of [BIDAF](https://github.com/allenai/bi-att-flow) model which we used as our baseline. We tried to preserve the same code structure as BIDAF.
 
 ## FAQ
-- **What does this model bring on the table?**
+- **What does this model bring to the table?**
   - We often use CNNs, RNNs (e.g., LSTMs), or more complicated models constructed from these basic neural network structures to create good representations (features) for our target task. But if someone ask us what does each of those entries in the generated representations (feature vectors) mean, we usually do not have a concrete answer. In other words, it is challenging to *interpret* those entries. Here we propose a model that can automatically learn grammatically / semantically interpretable representations through the Question-Answering (QA) task on [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/) dataset. More details in the paper. 
 
 - **Does your model performs the best on SQuAD leaderboard?**
