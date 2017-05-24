@@ -77,3 +77,8 @@
       
 - **I do not want to train the model again. Where is your trained model used to generate interpretability results reported in the paper?**
   - You can download it from [here](https://www.dropbox.com/s/a4j5ob40spgptr8/29.zip?dl=0). Please note that this is the trained model with batch size 40 that is used for interpretability results. 
+  - After downloading above zip file, unzip it and copy it in `out/basic`. Now run the following to get the exact interpretability results reported in the sections 5.2 and 8 of the paper in `out/basic/29/TPRvis`:
+  ```
+  python -m basic.cli --mode test --justTPR True --TPRregularizer1 True --TPRvis True --Fa_F_vis True --vis True --batch_size 60 --load_path "out/basic/29/save/basic-20000" --run_id 29 |& tee <path-to-your-log-files-location>/EXP29_Interpret.txt
+  ```
+  
