@@ -75,7 +75,7 @@
       
   - A file named `B_averaged_whole_test_set.csv` which is the binding matrix averaged over the whole validation set. It is not used for the results of this paper and you can neglect it. 
       
-- **I do not want to train the model again. Where is your trained model used to generate interpretability results reported in the paper?**
+- **I do not want to train the model again. Where is your trained model used to exactly regenerate interpretability results reported in the paper?**
   - You can download it from [here](https://www.dropbox.com/s/a4j5ob40spgptr8/29.zip?dl=0). Please note that this is the trained model with batch size 40 that is used for interpretability results. 
   - After downloading above zip file, unzip it and copy it in `out/basic`. Now run the following to get the exact interpretability results reported in the sections 5.2 and 8 of the paper in `out/basic/29/TPRvis`:
   ```
