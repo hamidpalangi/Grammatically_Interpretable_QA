@@ -1,5 +1,5 @@
 # Tensor Product Representation for Machine Reading Comprehension
-- This repository includes all necessary programs to implement and reproduce the results reported in the following paper (please use it to refer):
+- This repository includes all necessary programs to implement and reproduce the results reported in the following [paper](http://arxiv.org/abs/1705.08432) (please use it to refer):
 ```
 @article{TPR_QA,
   author    = {Hamid Palangi and Paul Smolensky and Xiaodong He and Li Deng},
