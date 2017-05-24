@@ -60,7 +60,7 @@
 
       Now open the file for a symbol in excel (or any other editor you use), sort the rows based on column B (cosine similarity) from largest to smallest, and then remove rows of all duplicate tokens in column A. What you get should are the words assigned to that symbol sorted from the word with highest similarity to the symbol to the word with lowest similarity.  
 
-      **Note**: Please note that after training your model, the occupation symbol in your model might not be symbol 27 and it might be one of other symbols. You should explore the words assigned to 100 symbols to find it out. This is because we do not provide our model with any external information about the semantic or syntactic structure of input dataset and it figures them out by en-to-end training by itself.
+      **Note**: Please note that after training your model, the symbols IDs might be different. For example, the occupation symbol in your model might not be symbol 27 and it might be one of other symbols. You should explore the words assigned to 100 symbols to find it out. This is because we do not provide our model with any external information about the semantic or syntactic structure of input dataset and it figures them out by itself through en-to-end training.
 
    - A file named `fw_u_aF_MAX_vis_Fa_F_fillerID_per_word_test_set` that includes the whole validation set tokens and the symbol ID assigned to it. The structure of this file is as follows:
       - Column A: Query number in the validation set
