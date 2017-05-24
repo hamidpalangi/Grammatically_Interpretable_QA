@@ -58,7 +58,7 @@
       - Column C: Token number in the query
       - Column D: Query number in the validation set
 
-      Now open the file for a symbol in excel (or any other editor you use), e.g., symbol 27 (occupation symbol), sort the rows based on column B (cosine similarity) from largest to smallest, and then remove rows of all duplicate tokens in column A. What you get should be similar to Table 3 of the paper.  
+      Now open the file for a symbol in excel (or any other editor you use), sort the rows based on column B (cosine similarity) from largest to smallest, and then remove rows of all duplicate tokens in column A. What you get should are the words assigned to that symbol sorted from the word with highest similarity to the symbol to the word with lowest similarity.  
 
       **Note**: Please note that after training your model, the occupation symbol in your model might not be symbol 27 and it might be one of other symbols. You should explore the words assigned to 100 symbols to find it out. This is because we do not provide our model with any external information about the semantic or syntactic structure of input dataset and it figures them out by en-to-end training by itself.
 
