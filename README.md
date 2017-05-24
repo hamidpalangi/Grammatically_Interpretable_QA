@@ -5,7 +5,7 @@
   author    = {Hamid Palangi and Paul Smolensky and Xiaodong He and Li Deng},
   title     = {Deep Learning of Grammatically-Interpretable Representations Through Question-Answering},
   year      = {2017},
-  url       = {?????},
+  url       = {http://arxiv.org/abs/1705.08432},
 }
 ```
 - The codes are written on the top of [BIDAF](https://github.com/allenai/bi-att-flow) model which we used as our baseline. We tried to preserve the same code structure as BIDAF.
