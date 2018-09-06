@@ -47,7 +47,7 @@
   In above example `MODEL_NUMBER` is `00` and `UPDATE_NUMBER` is `20000`.
   
   4. **Interpretability Results**:  
-  To regenerate results reported in section 5.2 and 8 (supplementary materials) run:
+  To regenerate results reported in section 5.2 and 8 (supplementary materials) of [version 1 of the paper](https://arxiv.org/abs/1705.08432v1) run:
   ```
   python -m basic.cli --mode test --justTPR True --TPRregularizer1 True --TPRvis True --Fa_F_vis True --vis True --batch_size 60 --load_path "out/basic/00/save/basic-20000" --run_id 00 |& tee <path-to-your-log-files-location>/EXP00_Interpret.txt
   ```
