@@ -1,9 +1,9 @@
-# Tensor Product Representation for Machine Reading Comprehension
+# Tensor Product Representations for Machine Reading Comprehension
 - This repository includes all necessary programs to implement and reproduce the results reported in the following [paper](http://arxiv.org/abs/1705.08432) (please use it to refer):
 ```
 @article{TPR_QA,
   author    = {Hamid Palangi and Paul Smolensky and Xiaodong He and Li Deng},
-  title     = {Deep Learning of Grammatically-Interpretable Representations Through Question-Answering},
+  title     = {Question-Answering with Grammatically-Interpretable Representations},
   year      = {2017},
   url       = {http://arxiv.org/abs/1705.08432},
 }
