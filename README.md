@@ -15,7 +15,7 @@
   - We often use CNNs, RNNs (e.g., LSTMs), or more complicated models constructed from these basic neural network structures to create good representations (features) for our target task. But if someone ask us what does each of those entries in the generated representations (feature vectors) mean, we usually do not have a concrete answer. In other words, it is challenging to *interpret* those entries. Here we propose a model that can automatically learn grammatically / semantically interpretable representations through the Question-Answering (QA) task on [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/) dataset. More details in the paper. 
 
 - **Does your model performs the best on SQuAD leaderboard?**
-  - Not yet. Currently the model performs about 2 F1 points worse than [BIDAF](https://github.com/allenai/bi-att-flow). The main goal of this work is not beating the best model on [SQuAD leaderboard](https://rajpurkar.github.io/SQuAD-explorer/) (r-net from MSR Asia at the time of writing this readme document) but to add interpretability to QA systems.
+  - Not yet. The main goal of this work is not beating the best model on [SQuAD leaderboard](https://rajpurkar.github.io/SQuAD-explorer/) (r-net from MSR Asia at the time of writing this readme document) but to add interpretability to QA systems.
 
 - **I do not want to read the whole paper, can you give me / point me to some examples of interpretable representations your model creates?**
   - Please check sections 5 and 8 of the paper.
