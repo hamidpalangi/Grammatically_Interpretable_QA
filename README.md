@@ -33,7 +33,7 @@
   ```
   `cF` and `cR` are weights for quantization function `Q` in the paper when added to the overall cost function. `cF` is for symbol related terms and `cR` is for role related terms. `nRoles` and `nSymbols` are number of roles and symbols respectively in the TPRN model.
   
-    **Note**: If you are training to just observe the reported F1 and Exact Match (EM) numbers use above line. If you are training to observe (reproduce) the interpretability results please use `--batch_size 40`. There is nothing special about batch size 40 but since we used a model trained with batch size 40 for interpretability experiments we advise to use it for reproducibility purposes.
+    **Note**: If you are training to just observe the reported F1 and Exact Match (EM) numbers in [version 1 of the paper](https://arxiv.org/abs/1705.08432v1) use above line. If you are training to observe (reproduce) the interpretability results in [version 1 of the paper](https://arxiv.org/abs/1705.08432v1) please use `--batch_size 40`. There is nothing special about batch size 40 but since we used a model trained with batch size 40 for interpretability experiments we advise to use it for reproducibility purposes.
   
   3. **Test**:  
   To test the trained model run:
