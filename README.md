@@ -18,7 +18,7 @@
   - Not yet. The main goal of this work is not beating the best model on [SQuAD leaderboard](https://rajpurkar.github.io/SQuAD-explorer/) (r-net from MSR Asia at the time of writing this readme document) but to add interpretability to QA systems.
 
 - **I do not want to read the whole paper, can you give me / point me to some examples of interpretable representations your model creates?**
-  - Please check sections 5 and 8 of the paper.
+  - Please check section 5 of the paper.
   
 - **How easy it is to grab TPRN cells proposed and implemented here and use them in my codes / models?**
   - TPRN is implemented in a way that you can simply add it to your library of different recurrent units (e.g., LSTM, GRU, etc). Simply import a TPRN cell you need from [my/tensorflow/tpr.py](my/tensorflow/tpr.py). Use `TPRCell` if you are not going to use quantization function `Q` in the paper. Use `TPRCellReg` if you need to get `aR` and `aF` vectors out for the quantization function. 
