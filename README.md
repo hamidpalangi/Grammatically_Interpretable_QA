@@ -10,7 +10,7 @@
 }
 ```
 - The codes are written on the top of [BIDAF](https://github.com/allenai/bi-att-flow) model which we used as our baseline. We tried to preserve the same code structure as BIDAF.
-- Below procedure describes steps to regenerate the results of [version 1 of the paper](https://arxiv.org/abs/1705.08432v1). There has been some modifications to improve the performance after that reflected in the last version of the paper. 
+- Below procedure describes steps to regenerate the results of [version 1 of the paper](https://arxiv.org/abs/1705.08432v1). There has been some modifications to improve the performance afterwards reflected in the last version of the paper. 
 
 ## FAQ
 - **What does this model bring to the table?**
