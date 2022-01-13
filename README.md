@@ -1,4 +1,4 @@
-# Tensor Product Representations for Machine Reading Comprehension
+# Question-Answering with Grammatically-Interpretable Representations
 - This repository includes all necessary programs to implement and reproduce the results reported in the following [paper](http://arxiv.org/abs/1705.08432) (please use it to refer):
 ```
 @article{TPR_QA,
